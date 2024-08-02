@@ -1,4 +1,12 @@
-import { Box, Flex, Link, Text, VStack, Avatar, useToast } from "@chakra-ui/react";
+import {
+	Box,
+	Flex,
+	Link,
+	Text,
+	VStack,
+	Avatar,
+	useToast,
+} from "@chakra-ui/react";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
 import { BsInstagram } from "react-icons/bs";
@@ -59,10 +67,13 @@ const UserHeader = () => {
 				</Flex>
 				<Flex>
 					<Box className="icon-container">
-						<BsInstagram size={{
-							base: "18",
-							md: "24"
-						}} cursor={"pointer"}></BsInstagram>
+						<BsInstagram
+							size={{
+								base: "18",
+								md: "24",
+							}}
+							cursor={"pointer"}
+						></BsInstagram>
 					</Box>
 					<Box className="icon-container">
 						<Menu>
@@ -71,7 +82,11 @@ const UserHeader = () => {
 							</MenuButton>
 							<Portal>
 								<MenuList bg={"gray.dark"}>
-									<MenuItem bg={"gray.dark"} _hover={{ bg: "gray.medium" }} onClick={copyURL}>
+									<MenuItem
+										bg={"gray.dark"}
+										_hover={{ bg: "gray.medium" }}
+										onClick={copyURL}
+									>
 										Copy Link
 									</MenuItem>
 								</MenuList>

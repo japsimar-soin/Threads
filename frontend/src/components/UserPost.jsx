@@ -57,7 +57,7 @@ const UserPost = ({ postImg, postTitle, likes, replies }) => {
 							</Text>
 							<Image src="/verified.png" w={4} h={4} ml={1} />
 						</Flex>
-						<Flex gap={1} alignItems={"center"} >
+						<Flex gap={1} alignItems={"center"}>
 							<Text fontStyle={"sm"} color={"gray.light"}>
 								1d
 							</Text>
@@ -76,13 +76,25 @@ const UserPost = ({ postImg, postTitle, likes, replies }) => {
 									</MenuButton>
 									<Portal>
 										<MenuList bg={"gray.dark"}>
-											<MenuItem bg={"gray.dark"} _hover={{ bg: "gray.medium" }} onClick={reportProfile}>
+											<MenuItem
+												bg={"gray.dark"}
+												_hover={{ bg: "gray.medium" }}
+												onClick={reportProfile}
+											>
 												Report Profile
 											</MenuItem>
-											<MenuItem bg={"gray.dark"} _hover={{ bg: "gray.medium" }} onClick={copyLink}>
+											<MenuItem
+												bg={"gray.dark"}
+												_hover={{ bg: "gray.medium" }}
+												onClick={copyLink}
+											>
 												Copy Link
 											</MenuItem>
-											<MenuItem bg={"gray.dark"} _hover={{ bg: "gray.medium" }} onClick={savePost}>
+											<MenuItem
+												bg={"gray.dark"}
+												_hover={{ bg: "gray.medium" }}
+												onClick={savePost}
+											>
 												Save
 											</MenuItem>
 										</MenuList>
