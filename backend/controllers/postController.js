@@ -7,27 +7,27 @@ const createPost = async (req, res) => {
 		if (!postedBy || !text) {
 			return res
 				.status(400)
-				.json({ message: "postedBy, and text fields are required" });
+				.json({ error: "postedBy, and text fields are required" });
 		}
 		const user = await User.findById(postedBy);
 		if (!user) {
-			return res.status(400).json({ message: "User not found" });
+			return res.status(400).json({ error: "User not found" });
 		}
 		// console.log(user._id + " " + req.user._id.toString());
 		if (user._id.toString() !== req.user._id.toString()) {
-			return res.status(400).json({ message: "Not authorized" });
+			return res.status(400).json({ error: "Not authorized" });
 		}
 		const maxLen = 500;
 		if (text.length > maxLen) {
 			return res
 				.status(400)
-				.json({ message: `Text must be less than ${maxLen} characters.` });
+				.json({ error: `Text must be less than ${maxLen} characters.` });
 		}
 		const newPost = new Post({ postedBy, text, image });
 		await newPost.save();
 		res.status(201).json({ message: "Post created successfully", newPost });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({ error: error.message });
 		console.log(error);
 	}
 };
@@ -36,11 +36,11 @@ const getPost = async (req, res) => {
 	try {
 		const post = await Post.findById(req.params.id);
 		if (!post) {
-			return res.status(404).json({ message: "Post not found" });
+			return res.status(404).json({ error: "Post not found" });
 		}
 		res.status(200).json({ post });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({ error: error.message });
 	}
 };
 
@@ -50,7 +50,7 @@ const likeUnlikePost = async (req, res) => {
 		const userId = req.user._id;
 		const post = await Post.findById(postId);
 		if (!post) {
-			return res.status(404).json({ message: "Post not found." });
+			return res.status(404).json({ error: "Post not found." });
 		}
 		const postLikedByUser = post.likes.includes(userId);
 		if (postLikedByUser) {
@@ -62,7 +62,7 @@ const likeUnlikePost = async (req, res) => {
 			res.status(200).json({ message: "Post liked" });
 		}
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({ error: error.message });
 	}
 };
 
@@ -70,17 +70,17 @@ const deletePost = async (req, res) => {
 	try {
 		const post = await Post.findById(req.params.id);
 		if (!post) {
-			return res.status(404).json({ message: "Post not found" });
+			return res.status(404).json({ error: "Post not found" });
 		}
 		if (post.postedBy.toString() !== req.user._id.toString()) {
 			res
 				.status(401)
-				.json({ message: "You are not authorized to delete this post" });
+				.json({ error: "You are not authorized to delete this post" });
 		}
 		await Post.findByIdAndDelete(req.params.id);
 		res.status(200).json({ message: "Post deleted successfully" });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({ error: error.message });
 		console.log(error);
 	}
 };
@@ -94,18 +94,18 @@ const replyToPost = async (req, res) => {
 		const username = req.user.username;
 
 		if (!text) {
-			return res.status(400).json({ message: "Reply cannot be empty." });
+			return res.status(400).json({ error: "Reply cannot be empty." });
 		}
 		const post = await Post.findById(postId);
 		if (!post) {
-			res.status(404).json({ message: "Post not found" });
+			res.status(404).json({ error: "Post not found" });
 		}
 		const reply = { userId, text, userProfilePic, username };
 		post.replies.push(reply);
 		await post.save();
 		res.status(200).json({ message: "Replied to post successfully", post });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({ error: error.message });
 	}
 };
 
@@ -114,15 +114,15 @@ const getFeedPosts = async (req, res) => {
 		const userId = req.user._id;
 		const user = await User.findById(userId);
 		if (!user) {
-			return res.status(404).json({ message: "User not found" });
+			return res.status(404).json({ error: "User not found" });
 		}
 		const following = user.following;
 		const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({
 			createdAt: -1,
 		});
-        res.status(200).json({feedPosts});
+		res.status(200).json({ feedPosts });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({ error: error.message });
 	}
 };
 
