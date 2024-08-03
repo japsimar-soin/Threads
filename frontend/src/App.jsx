@@ -1,19 +1,19 @@
 import { Container } from "@chakra-ui/react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import Header from "./components/Header";
 import LogoutButton from "./components/LogoutButton";
 import UserPage from "./pages/UserPage";
 import PostPage from "./pages/PostPage";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
+import UpdateProfilePage from "./pages/UpdateProfilePage";
 import userAtom from "./atoms/userAtom";
-import { useRecoilValue } from "recoil";
-
 
 function App() {
 	const user = useRecoilValue(userAtom);
 	return (
-		<Container maxW="620px" >
+		<Container maxW="620px">
 			<Header></Header>
 			<Routes>
 				<Route
@@ -23,6 +23,10 @@ function App() {
 				<Route
 					path="/auth"
 					element={!user ? <AuthPage /> : <Navigate to="/" />}
+				/>
+				<Route
+					path="/update"
+					element={user ? <UpdateProfilePage /> : <Navigate to="/auth" />}
 				/>
 				<Route path="/:username" element={<UserPage />} />
 				<Route path="/:username/post/:pid" element={<PostPage />} />

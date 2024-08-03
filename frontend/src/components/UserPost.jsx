@@ -68,31 +68,31 @@ const UserPost = ({ postImg, postTitle, likes, replies }) => {
 										bg="transparent"
 										p={3}
 										borderRadius="full"
-										_hover={{ bg: "gray.dark" }}
-										_active={{ bg: "gray.dark" }}
+										_hover={{ bg: "gray.darkest" }}
+										_active={{ bg: "gray.darkest" }}
 										_focus={{ boxShadow: "none" }}
 									>
 										<BsThreeDots cursor={"pointer"} />
 									</MenuButton>
 									<Portal>
-										<MenuList bg={"gray.dark"}>
+										<MenuList bg={"gray.darkest"}>
 											<MenuItem
-												bg={"gray.dark"}
-												_hover={{ bg: "gray.medium" }}
+												bg={"gray.darkest"}
+												_hover={{ bg: "gray.darker" }}
 												onClick={reportProfile}
 											>
 												Report Profile
 											</MenuItem>
 											<MenuItem
-												bg={"gray.dark"}
-												_hover={{ bg: "gray.medium" }}
+												bg={"gray.darkest"}
+												_hover={{ bg: "gray.darker" }}
 												onClick={copyLink}
 											>
 												Copy Link
 											</MenuItem>
 											<MenuItem
-												bg={"gray.dark"}
-												_hover={{ bg: "gray.medium" }}
+												bg={"gray.darkest"}
+												_hover={{ bg: "gray.darker" }}
 												onClick={savePost}
 											>
 												Save

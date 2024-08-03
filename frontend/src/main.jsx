@@ -25,9 +25,16 @@ const config = {
 
 const colors = {
 	gray: {
+		darkest: "#1e1e1e",
+		darker: "#303030",
+		dark: "#383838",
+		dull: "#484848",
+		mid: "#505050",
+		medium: "#585858",
 		light: "#616161",
-		dark: "#1e1e1e",
-		medium: "#303030",
+		verylight: "#808080",
+		lighter: "#989898",
+		lightest: "#DCDCDC"
 	},
 };
 

@@ -54,7 +54,7 @@ export default function LoginCard() {
 			borderRadius={"xl"}
 			align={"center"}
 			justify={"center"}
-			bg={useColorModeValue("gray.50", "gray.medium")}
+			bg={useColorModeValue("gray.50", "gray.darker")}
 		>
 			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
 				<Stack align={"center"}>
@@ -64,7 +64,7 @@ export default function LoginCard() {
 				</Stack>
 				<Box
 					rounded={"lg"}
-					bg={useColorModeValue("white", "gray.dark")}
+					bg={useColorModeValue("white", "gray.darkest")}
 					boxShadow={"lg"}
 					p={8}
 					w={{
@@ -115,7 +115,7 @@ export default function LoginCard() {
 							<Button
 								loadingText="Submitting"
 								size="lg"
-								bg={"gray.medium"}
+								bg={"gray.darker"}
 								color={"white"}
 								_hover={{
 									bg: "gray.light",

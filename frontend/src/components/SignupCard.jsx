@@ -63,7 +63,7 @@ export default function SignupCard() {
 			borderRadius={"xl"}
 			align={"center"}
 			justify={"center"}
-			bg={useColorModeValue("gray.50", "gray.medium")}
+			bg={useColorModeValue("gray.50", "gray.darker")}
 		>
 			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
 				<Stack align={"center"}>
@@ -72,8 +72,8 @@ export default function SignupCard() {
 					</Heading>
 				</Stack>
 				<Box
-					rounded={"lg"}
-					bg={useColorModeValue("white", "gray.dark")}
+					rounded={"xl"}
+					bg={useColorModeValue("white", "gray.darkest")}
 					boxShadow={"lg"}
 					p={8}
 				>
@@ -140,7 +140,7 @@ export default function SignupCard() {
 							<Button
 								loadingText="Submitting"
 								size="lg"
-								bg={"gray.medium"}
+								bg={"gray.darker"}
 								color={"white"}
 								_hover={{
 									bg: "gray.light",

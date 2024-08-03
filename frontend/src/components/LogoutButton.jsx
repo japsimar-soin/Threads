@@ -1,7 +1,8 @@
 import { Button } from "@chakra-ui/react";
-import userAtom from "../atoms/userAtom";
 import { useSetRecoilState } from "recoil";
+import { FiLogOut } from "react-icons/fi";
 import useShowToast from "../hooks/useShowToast";
+import userAtom from "../atoms/userAtom";
 
 const LogoutButton = () => {
 	const setUser = useSetRecoilState(userAtom);
@@ -18,13 +19,12 @@ const LogoutButton = () => {
 			console.log(data);
 			if (data.error) {
 				showToast("Error", data.error, "error");
-                return;
+				return;
 			}
 			localStorage.removeItem("user-info");
 			setUser(null);
 		} catch (error) {
 			showToast("Error", error, "error");
-			
 		}
 	};
 	return (
@@ -35,7 +35,7 @@ const LogoutButton = () => {
 			size={"sm"}
 			onClick={handleLogout}
 		>
-			Logout
+			<FiLogOut size={20}/>
 		</Button>
 	);
 };

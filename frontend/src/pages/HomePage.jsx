@@ -1,11 +1,13 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, useColorModeValue } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
 	return (
 		<Link to="/user4">
 			<Flex w={"full"} justifyContent={"center"}>
-				<Button mx={"auto"}>Visit Profile Page</Button>
+				<Button mx={"auto"} bg={useColorModeValue("gray.300", "gray.medium")}>
+					Visit Profile Page
+				</Button>
 			</Flex>
 		</Link>
 	);
