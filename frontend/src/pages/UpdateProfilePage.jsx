@@ -23,20 +23,20 @@ export default function UpdateProfilePage() {
 	const showToast = useShowToast();
 	const { handleImageChange, image } = usePreviewImage();
 	const [user, setUser] = useRecoilState(userAtom);
+	const [updating, setUpdating] = useState(false);
 	const [inputs, setInputs] = useState({
-		name: user.name ,
+		name: user.name,
 		username: user.username,
 		email: user.email,
 		bio: user.bio,
 		password: "",
 	});
-	const [updating, setUpdating] = useState(false);
 	// const renderPasswordPlaceholder = () => {
 	// 	return "*".repeat(inputs.password.length);
 	// };
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if(updating){
+		if (updating) {
 			return;
 		}
 		setUpdating(true);
@@ -57,11 +57,12 @@ export default function UpdateProfilePage() {
 			setUser(data);
 			localStorage.setItem("user-info", JSON.stringify(data));
 		} catch (error) {
-			showToast("Error", error, "error");
-		} finally{
+			showToast("Error", error.message, "error");
+		} finally {
 			setUpdating(false);
 		}
 	};
+
 	return (
 		<form onSubmit={handleSubmit}>
 			<Flex
@@ -177,7 +178,7 @@ export default function UpdateProfilePage() {
 							_hover={{
 								bg: useColorModeValue("gray.verylight", "gray.lighter"),
 							}}
-                            type="button"
+							type="button"
 						>
 							Cancel
 						</Button>
@@ -187,7 +188,7 @@ export default function UpdateProfilePage() {
 							_hover={{
 								bg: useColorModeValue("gray.300", "gray.verylight"),
 							}}
-                            type="submit"
+							type="submit"
 							isLoading={updating}
 						>
 							Submit
@@ -198,3 +199,6 @@ export default function UpdateProfilePage() {
 		</form>
 	);
 }
+
+
+

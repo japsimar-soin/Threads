@@ -24,9 +24,10 @@ const LogoutButton = () => {
 			localStorage.removeItem("user-info");
 			setUser(null);
 		} catch (error) {
-			showToast("Error", error, "error");
+			showToast("Error", error.message, "error");
 		}
 	};
+	
 	return (
 		<Button
 			position={"fixed"}
@@ -35,9 +36,11 @@ const LogoutButton = () => {
 			size={"sm"}
 			onClick={handleLogout}
 		>
-			<FiLogOut size={20}/>
+			<FiLogOut size={20} />
 		</Button>
 	);
 };
 
 export default LogoutButton;
+
+

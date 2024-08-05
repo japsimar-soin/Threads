@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 import generateToken from "../utils/helpers/generateToken.js";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -147,12 +148,15 @@ const updateUser = async (req, res) => {
 	}
 };
 
-const getUserProfile = async (req, res) => {
-	const { username } = req.params;
+const getUser = async (req, res) => {
+	const { query } = req.params;
 	try {
-		const user = await User.findOne({ username })
-			.select("-password")
-			.select("-updatedAt");
+		let user;
+		if(mongoose.Types.ObjectId.isValid(query)){
+			user = await User.findOne({_id: query}).select("-password").select("-updatedAt");
+		} else{
+			user = await User.findOne({username: query}).select("-password").select("-updatedAt");
+		}
 		if (!user) {
 			return res.status(400).json({ error: "User not found." });
 		}
@@ -169,5 +173,5 @@ export {
 	logoutUser,
 	followUnfollowUser,
 	updateUser,
-	getUserProfile,
+	getUser,
 };

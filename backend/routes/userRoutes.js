@@ -6,12 +6,12 @@ import {
 	logoutUser,
 	followUnfollowUser,
 	updateUser,
-	getUserProfile,
+	getUser,
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.get("/profile/:username", getUserProfile);
+router.get("/profile/:query", getUser);
 router.post("/signup", signupUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);

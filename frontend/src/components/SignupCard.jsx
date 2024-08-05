@@ -24,14 +24,14 @@ import userAtom from "../atoms/userAtom";
 export default function SignupCard() {
 	const [showPassword, setShowPassword] = useState(false);
 	const showToast = useShowToast();
-    const setUser = useSetRecoilState(userAtom);
+	const setUser = useSetRecoilState(userAtom);
+	const setAuthScreen = useSetRecoilState(authScreenAtom);
 	const [inputs, setInputs] = useState({
 		name: "",
 		username: "",
 		email: "",
 		password: "",
 	});
-	const setAuthScreen = useSetRecoilState(authScreenAtom);
 	const handleSignup = async () => {
 		if (inputs.password.length < 6) {
 			showToast("Error", "password needs minimum 6 characters", "error");
@@ -52,12 +52,13 @@ export default function SignupCard() {
 			}
 
 			localStorage.setItem("user-info", JSON.stringify(data));
-            setUser(data);
+			setUser(data);
 		} catch (error) {
-			showToast("Error", error, "error");
-            
+			showToast("Error", error.message, "error");
 		}
 	};
+
+	
 	return (
 		<Flex
 			borderRadius={"xl"}

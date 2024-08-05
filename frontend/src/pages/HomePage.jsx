@@ -1,16 +1,52 @@
-import { Button, Flex, useColorModeValue } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Flex, Spinner } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import Post from "../components/Post";
+import useShowToast from "../hooks/useShowToast";
 
 const HomePage = () => {
+	const showToast = useShowToast();
+	const [loading, setLoading] = useState(true);
+	const [posts, setPosts] = useState([]);
+
+	useEffect(() => {
+		const getFeedPosts = async () => {
+			setLoading(true);
+			try {
+				const res = await fetch("api/posts/feed");
+				const data = await res.json();
+				console.log(data);
+				if(data.error){
+					showToast("Error", data.error, "error");
+					return;
+				}
+				setPosts(data);
+			} catch (error) {
+				showToast("Error", error.message, "error");
+			}
+			finally{
+				setLoading(false);
+			}
+		};
+		getFeedPosts();
+	}, [showToast]);
+	
 	return (
-		<Link to="/user4">
-			<Flex w={"full"} justifyContent={"center"}>
-				<Button mx={"auto"} bg={useColorModeValue("gray.300", "gray.medium")}>
-					Visit Profile Page
-				</Button>
+		<>
+				{!loading && posts.length === 0 && <h1>You are not following anyone</h1>}
+
+		{loading && (
+			<Flex justifyContent={"center"}>
+				<Spinner size={"xl"} />
 			</Flex>
-		</Link>
+		)}
+
+		{posts.map((post) => (
+			<Post key={post._id} post={post} postedBy={post.postedBy} />
+		))}
+		</>
 	);
 };
 
 export default HomePage;
+
+

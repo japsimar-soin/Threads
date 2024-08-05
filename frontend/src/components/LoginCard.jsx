@@ -22,33 +22,38 @@ import userAtom from "../atoms/userAtom";
 
 export default function LoginCard() {
 	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const showToast = useShowToast();
+	const setUser = useSetRecoilState(userAtom);
+	const setAuthScreen = useSetRecoilState(authScreenAtom);
 	const [inputs, setInputs] = useState({
 		username: "",
 		password: "",
 	});
-	const showToast = useShowToast();
-	const setUser = useSetRecoilState(userAtom);
-	const setAuthScreen = useSetRecoilState(authScreenAtom);
 	const handleLogin = async () => {
+		setLoading(true);
 		try {
 			const res = await fetch("/api/users/login", {
-				method: "POST", 
+				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-				}, 
-				body: JSON.stringify(inputs)
+				},
+				body: JSON.stringify(inputs),
 			});
 			const data = await res.json();
-			if(data.error){
+			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
 			localStorage.setItem("user-info", JSON.stringify(data));
 			setUser(data);
 		} catch (error) {
-			showToast("Error", error, "error");
+			showToast("Error", error.message, "error");
+		} finally{
+			setLoading(false);
 		}
 	};
+	
 	return (
 		<Flex
 			borderRadius={"xl"}
@@ -113,7 +118,6 @@ export default function LoginCard() {
 						</FormControl>
 						<Stack spacing={10} pt={2}>
 							<Button
-								loadingText="Submitting"
 								size="lg"
 								bg={"gray.darker"}
 								color={"white"}
@@ -121,6 +125,7 @@ export default function LoginCard() {
 									bg: "gray.light",
 								}}
 								onClick={handleLogin}
+								isLoading={loading}
 							>
 								Login
 							</Button>
@@ -145,3 +150,5 @@ export default function LoginCard() {
 		</Flex>
 	);
 }
+
+

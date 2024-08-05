@@ -20,22 +20,22 @@ import useShowToast from "../hooks/useShowToast";
 const UserHeader = ({ user }) => {
 	const showToast = useShowToast();
 	const currentUser = useRecoilValue(userAtom);
+	const [updating, setUpdating] = useState(false);
+	const [following, setFollowing] = useState(
+		user.followers.includes(currentUser?._id)
+	);
 	const copyURL = () => {
 		const currentURL = window.location.href;
 		navigator.clipboard.writeText(currentURL).then(() => {
 			showToast("Success", "URL copied to clipboard", "success");
 		});
 	};
-	const [following, setFollowing] = useState(
-		user.followers.includes(currentUser._id)
-	);
-	const [updating, setUpdating] = useState(false);
 	const handleFollowUnfollow = async () => {
 		if (!currentUser) {
 			showToast("Error", "Login first", "error");
 			return;
 		}
-		if(updating){
+		if (updating) {
 			return;
 		}
 		setUpdating(true);
@@ -56,11 +56,11 @@ const UserHeader = ({ user }) => {
 				user.followers.pop();
 			} else {
 				showToast("Success", `Followed ${user.name}`, "success");
-				user.followers.push(currentUser._id);
+				user.followers.push(currentUser?._id);
 			}
 			setFollowing(!following);
 		} catch (error) {
-			showToast("Error", error, "error");
+			showToast("Error", error.message, "error");
 		} finally {
 			setUpdating(false);
 		}
@@ -111,12 +111,12 @@ const UserHeader = ({ user }) => {
 			</Flex>
 			<Text>{user.bio}</Text>
 
-			{currentUser._id === user._id && (
+			{currentUser?._id === user._id && (
 				<Link as={RouterLink} to="/update">
 					<Button size={"sm"}>Update profile</Button>
 				</Link>
 			)}
-			{currentUser._id !== user._id && (
+			{currentUser?._id !== user._id && (
 				<Button size={"sm"} onClick={handleFollowUnfollow} isLoading={updating}>
 					{following ? "Unfollow" : "Follow"}
 				</Button>
@@ -181,5 +181,7 @@ const UserHeader = ({ user }) => {
 		</VStack>
 	);
 };
+
+
 
 export default UserHeader;

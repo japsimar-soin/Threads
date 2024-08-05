@@ -2,6 +2,7 @@ import { Container } from "@chakra-ui/react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import Header from "./components/Header";
+import CreatePost from "./components/CreatePost";
 import LogoutButton from "./components/LogoutButton";
 import UserPage from "./pages/UserPage";
 import PostPage from "./pages/PostPage";
@@ -32,8 +33,12 @@ function App() {
 				<Route path="/:username/post/:pid" element={<PostPage />} />
 			</Routes>
 			{user && <LogoutButton />}
+			{user && <CreatePost />}
 		</Container>
 	);
 }
 
 export default App;
+
+
+

@@ -34,7 +34,7 @@ const colors = {
 		light: "#616161",
 		verylight: "#808080",
 		lighter: "#989898",
-		lightest: "#DCDCDC"
+		lightest: "#DCDCDC",
 	},
 };
 
@@ -52,3 +52,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 		</RecoilRoot>
 	</React.StrictMode>
 );
+
