@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useSetRecoilState } from "recoil";
-import authScreenAtom from "../atoms/authAtom";
+import authAtom from "../atoms/authAtom";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
 
@@ -25,7 +25,7 @@ export default function SignupCard() {
 	const [showPassword, setShowPassword] = useState(false);
 	const showToast = useShowToast();
 	const setUser = useSetRecoilState(userAtom);
-	const setAuthScreen = useSetRecoilState(authScreenAtom);
+	const setAuthScreen = useSetRecoilState(authAtom);
 	const [inputs, setInputs] = useState({
 		name: "",
 		username: "",
@@ -58,7 +58,6 @@ export default function SignupCard() {
 		}
 	};
 
-	
 	return (
 		<Flex
 			borderRadius={"xl"}

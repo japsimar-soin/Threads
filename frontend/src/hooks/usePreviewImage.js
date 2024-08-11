@@ -20,7 +20,4 @@ const usePreviewImage = () => {
 	return { handleImageChange, image, setImage };
 };
 
-
-
-
 export default usePreviewImage;

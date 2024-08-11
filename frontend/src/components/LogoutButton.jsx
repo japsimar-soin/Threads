@@ -1,46 +1,24 @@
-import { Button } from "@chakra-ui/react";
-import { useSetRecoilState } from "recoil";
+import { Button, useColorModeValue } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
-import useShowToast from "../hooks/useShowToast";
-import userAtom from "../atoms/userAtom";
+import useLogout from "../hooks/useLogout";
 
 const LogoutButton = () => {
-	const setUser = useSetRecoilState(userAtom);
-	const showToast = useShowToast();
-	const handleLogout = async () => {
-		try {
-			const res = await fetch("/api/users/logout", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const data = await res.json();
-			console.log(data);
-			if (data.error) {
-				showToast("Error", data.error, "error");
-				return;
-			}
-			localStorage.removeItem("user-info");
-			setUser(null);
-		} catch (error) {
-			showToast("Error", error.message, "error");
-		}
-	};
-	
+	const logout = useLogout();
+
 	return (
 		<Button
 			position={"fixed"}
 			top={"30px"}
-			right={"30px"}
+			right={4}
 			size={"sm"}
-			onClick={handleLogout}
+			onClick={logout}
+			bg={useColorModeValue("gray.300", "gray.darkest")}
+			_hover={{ bg: useColorModeValue("gray.400", "gray.mid") }}
+			display={{ base: "none", md: "block" }}
 		>
-			<FiLogOut size={20} />
+			<FiLogOut size={16} />
 		</Button>
 	);
 };
 
 export default LogoutButton;
-
-

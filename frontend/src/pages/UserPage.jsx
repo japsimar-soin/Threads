@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import UserPost from "../components/UserPost";
+import { useRecoilState } from "recoil";
+import postAtom from "../atoms/postAtom";
+import Post from "../components/Post";
 import UserHeader from "../components/UserHeader";
 import useShowToast from "../hooks/useShowToast";
-import Post from "../components/Post";
 import useGetUserProfile from "../hooks/useGetUserProfile";
 
 const UserPage = () => {
 	const { user, loading } = useGetUserProfile();
-	const [posts, setPosts] = useState([]);
-	const [fetchingPosts, setFetchingPosts] = useState(true);
 	const { username } = useParams();
+	const [posts, setPosts] = useRecoilState(postAtom);
+	const [fetchingPosts, setFetchingPosts] = useState(true);
 	const showToast = useShowToast();
 
 	useEffect(() => {
 		const getPosts = async () => {
+			
+			if(!user) return;
 			setFetchingPosts(true);
 			try {
 				const res = await fetch(`/api/posts/user/${username}`);
@@ -33,7 +36,7 @@ const UserPage = () => {
 			}
 		};
 		getPosts();
-	}, [username, showToast]);
+	}, [username, showToast, setPosts, user]);
 
 	if (!user && loading) {
 		return (
@@ -44,8 +47,7 @@ const UserPage = () => {
 	}
 
 	if (!user && !loading) {
-		showToast("Error", "User does not exist", "error");
-		return;
+		return <h1>User not found</h1>;
 	}
 
 	return (

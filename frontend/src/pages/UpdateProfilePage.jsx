@@ -19,11 +19,7 @@ import usePreviewImage from "../hooks/usePreviewImage";
 import useShowToast from "../hooks/useShowToast";
 
 export default function UpdateProfilePage() {
-	const fileRef = useRef(null);
-	const showToast = useShowToast();
-	const { handleImageChange, image } = usePreviewImage();
 	const [user, setUser] = useRecoilState(userAtom);
-	const [updating, setUpdating] = useState(false);
 	const [inputs, setInputs] = useState({
 		name: user.name,
 		username: user.username,
@@ -31,6 +27,10 @@ export default function UpdateProfilePage() {
 		bio: user.bio,
 		password: "",
 	});
+	const fileRef = useRef(null);
+	const [updating, setUpdating] = useState(false);
+	const showToast = useShowToast();
+	const { handleImageChange, image } = usePreviewImage();
 	// const renderPasswordPlaceholder = () => {
 	// 	return "*".repeat(inputs.password.length);
 	// };
@@ -104,13 +104,13 @@ export default function UpdateProfilePage() {
 									hidden
 									ref={fileRef}
 									onChange={handleImageChange}
-								></Input>
+								/>
 							</Center>
 						</Stack>
 					</FormControl>
 					<HStack>
 						<Box>
-							<FormControl isReadOnly>
+							<FormControl>
 								<FormLabel>Name</FormLabel>
 								<Input
 									type="text"
@@ -124,7 +124,7 @@ export default function UpdateProfilePage() {
 							</FormControl>
 						</Box>
 						<Box>
-							<FormControl isReadOnly>
+							<FormControl>
 								<FormLabel>Username</FormLabel>
 								<Input
 									type="text"
@@ -138,7 +138,7 @@ export default function UpdateProfilePage() {
 							</FormControl>
 						</Box>
 					</HStack>
-					<FormControl isReadOnly>
+					<FormControl>
 						<FormLabel>Email</FormLabel>
 						<Input
 							type="email"
@@ -199,6 +199,3 @@ export default function UpdateProfilePage() {
 		</form>
 	);
 }
-
-
-

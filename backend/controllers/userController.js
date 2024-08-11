@@ -1,8 +1,32 @@
 import User from "../models/userModel.js";
+import Post from "../models/postModel.js";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
-import generateToken from "../utils/helpers/generateToken.js";
+import generateToken from "../utils/generateToken.js";
 import { v2 as cloudinary } from "cloudinary";
+
+const getUser = async (req, res) => {
+	const { query } = req.params;
+	try {
+		let user;
+		if (mongoose.Types.ObjectId.isValid(query)) {
+			user = await User.findOne({ _id: query })
+				.select("-password")
+				.select("-updatedAt");
+		} else {
+			user = await User.findOne({ username: query })
+				.select("-password")
+				.select("-updatedAt");
+		}
+		if (!user) {
+			return res.status(404).json({ error: "User not found." });
+		}
+		res.status(200).json(user);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+		console.log("Error while trying to get user profile : ", error.message);
+	}
+};
 
 const signupUser = async (req, res) => {
 	try {
@@ -50,6 +74,12 @@ const loginUser = async (req, res) => {
 		if (!user || !isPasswordCorrect) {
 			return res.status(400).json({ error: "Invalid credentials" });
 		}
+
+		if (user.isFrozen) {
+			user.isFrozen = false;
+			await user.save();
+		}
+
 		generateToken(user._id, res);
 		res.status(200).json({
 			_id: user._id,
@@ -121,7 +151,7 @@ const updateUser = async (req, res) => {
 		}
 		if (password) {
 			const salt = await bcrypt.genSalt(10);
-			const hashPassword = bcrypt.hash(password, salt);
+			const hashPassword = await bcrypt.hash(password, salt);
 			user.password = hashPassword;
 		}
 		if (profilePic) {
@@ -139,7 +169,21 @@ const updateUser = async (req, res) => {
 		user.username = username || user.username;
 		user.profilePic = profilePic || user.profilePic;
 		user.bio = bio || user.bio;
+
 		user = await user.save();
+
+		await Post.updateMany(
+			{ "replies.userId": userId },
+			{
+				$set: {
+					"replies.$[reply].username": user.username,
+					"replies.$[reply].userProfilePic": user.profilePic,
+				},
+			},
+			{
+				arrayFilters: [{ "reply.userId": userId }],
+			}
+		);
 		user.password = null;
 		res.status(200).json(user);
 	} catch (error) {
@@ -148,22 +192,44 @@ const updateUser = async (req, res) => {
 	}
 };
 
-const getUser = async (req, res) => {
-	const { query } = req.params;
+const getSuggestedUsers = async (req, res) => {
 	try {
-		let user;
-		if(mongoose.Types.ObjectId.isValid(query)){
-			user = await User.findOne({_id: query}).select("-password").select("-updatedAt");
-		} else{
-			user = await User.findOne({username: query}).select("-password").select("-updatedAt");
-		}
-		if (!user) {
-			return res.status(400).json({ error: "User not found." });
-		}
-		res.status(200).json(user);
+		const userId = req.user._id;
+		const usersYouFollow = await User.findById(userId).select("following");
+		const users = await User.aggregate([
+			{
+				$match: {
+					_id: { $ne: userId },
+				},
+			},
+			{
+				$sample: { size: 10 },
+			},
+		]);
+
+		const filteredUsers = users.filter(
+			(user) => !usersYouFollow.following.includes(user._id)
+		);
+		const suggestedUsers = filteredUsers.slice(0, 4);
+
+		suggestedUsers.forEach((user) => (user.password = null));
+		res.status(200).json(suggestedUsers);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
-		console.log("Error while trying to get user profile : ", error.message);
+	}
+};
+
+const freezeUserAccount = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id);
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+		user.isFrozen = true;
+		await user.save();
+		res.status(200).json({ success: true });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
 	}
 };
 
@@ -174,4 +240,6 @@ export {
 	followUnfollowUser,
 	updateUser,
 	getUser,
+	getSuggestedUsers,
+	freezeUserAccount,
 };

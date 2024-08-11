@@ -12,59 +12,23 @@ import { Portal } from "@chakra-ui/portal";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
 import { Link as RouterLink } from "react-router-dom";
-import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
+import useFollowUnfollow from "../hooks/useFollowUnfollow";
 import useShowToast from "../hooks/useShowToast";
 
 const UserHeader = ({ user }) => {
 	const showToast = useShowToast();
 	const currentUser = useRecoilValue(userAtom);
-	const [updating, setUpdating] = useState(false);
-	const [following, setFollowing] = useState(
-		user.followers.includes(currentUser?._id)
-	);
+	const {handleFollowUnfollow, following, updating} = useFollowUnfollow(user);
+	
 	const copyURL = () => {
 		const currentURL = window.location.href;
 		navigator.clipboard.writeText(currentURL).then(() => {
 			showToast("Success", "URL copied to clipboard", "success");
 		});
 	};
-	const handleFollowUnfollow = async () => {
-		if (!currentUser) {
-			showToast("Error", "Login first", "error");
-			return;
-		}
-		if (updating) {
-			return;
-		}
-		setUpdating(true);
-		try {
-			const res = await fetch(`/api/users/follow/${user._id}`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const data = await res.json();
-			if (data.error) {
-				showToast("Error", data.error, "error");
-				return;
-			}
-			if (following) {
-				showToast("Success", `Unfollowed ${user.name}`, "success");
-				user.followers.pop();
-			} else {
-				showToast("Success", `Followed ${user.name}`, "success");
-				user.followers.push(currentUser?._id);
-			}
-			setFollowing(!following);
-		} catch (error) {
-			showToast("Error", error.message, "error");
-		} finally {
-			setUpdating(false);
-		}
-	};
+
 
 	return (
 		<VStack gap={4} alignItems={"start"}>
@@ -181,7 +145,5 @@ const UserHeader = ({ user }) => {
 		</VStack>
 	);
 };
-
-
 
 export default UserHeader;

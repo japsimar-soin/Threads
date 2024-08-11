@@ -5,23 +5,25 @@ import {
 	Flex,
 	Image,
 	Text,
-	Button,
-	useColorModeValue,
+	// Button,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { BsThreeDots } from "react-icons/bs";
-import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
-import { Portal } from "@chakra-ui/portal";
-import { useRecoilValue } from "recoil";
-import useGetPostCreationTime from "../hooks/useGetPostCreationTime";
+// import { BsThreeDots } from "react-icons/bs";
+// import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
+// import { Portal } from "@chakra-ui/portal";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { formatDistanceToNow } from "date-fns";
+// import useGetPostCreationTime from "../hooks/useGetPostCreationTime";
 import useShowToast from "../hooks/useShowToast";
 import Actions from "./Actions";
 import userAtom from "../atoms/userAtom";
+import postAtom from "../atoms/postAtom";
 
 const Post = ({ post, postedBy }) => {
 	const [user, setUser] = useState(null);
-	const { numericValue, unit } = useGetPostCreationTime(post.createdAt);
+	const [posts, setPosts] = useRecoilState(postAtom);
+	// const { numericValue, unit } = useGetPostCreationTime(post.createdAt);
 	const showToast = useShowToast();
 	const navigate = useNavigate();
 	const currentUser = useRecoilValue(userAtom);
@@ -39,6 +41,7 @@ const Post = ({ post, postedBy }) => {
 				return;
 			}
 			showToast("Success", "Post deleted", "success");
+			setPosts(posts.filter((p) => p._id !== post._id));
 		} catch (error) {
 			showToast("Error", error.message, "error");
 		}
@@ -84,10 +87,11 @@ const Post = ({ post, postedBy }) => {
 					<Box w={"1px"} h={"full"} bg={"gray.light"} my={2} />
 					<Box position={"relative"} w={"full"}>
 						{post.replies.length === 0 && <Text textAlign={"center"}>🥱</Text>}
+						
 						{post.replies[0] && (
 							<Avatar
 								size={"xs"}
-								name="Ishu"
+								name={post.replies[0].username}
 								src={post.replies[0].userProfilePic}
 								position={"absolute"}
 								top={"0px"}
@@ -143,12 +147,11 @@ const Post = ({ post, postedBy }) => {
 								textAlign={"right"}
 								width={36}
 							>
-								{numericValue + unit} ago
+								{formatDistanceToNow(new Date(post.createdAt))} ago
 							</Text>
 
-							
 							{currentUser?._id === user._id && (
-								<DeleteIcon size={20} ml={4} onclick={handleDeletePost} />
+								<DeleteIcon size={20} ml={4} onClick={handleDeletePost} />
 							)}
 						</Flex>
 					</Flex>
@@ -160,7 +163,7 @@ const Post = ({ post, postedBy }) => {
 							border={"1px solid"}
 							borderColor={"gray.light"}
 						>
-							<Image src={post.image} w={"full"}></Image>
+							<Image src={post.image} w={"full"} />
 						</Box>
 					)}
 					<Flex gap={3} my={1}>

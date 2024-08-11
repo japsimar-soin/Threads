@@ -19,19 +19,23 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { RiImageAddFill } from "react-icons/ri";
-import { useRecoilValue } from "recoil";
-import usePreviewImage from "../hooks/usePreviewImage";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
+import postAtom from "../atoms/postAtom";
 import useShowToast from "../hooks/useShowToast";
+import usePreviewImage from "../hooks/usePreviewImage";
 
 const MAX_CHAR = 500;
 
 const CreatePost = () => {
 	const [postText, setPostText] = useState("");
+	const [posts, setPosts] = useRecoilState(postAtom);
 	const [remainChar, setRemainChar] = useState(MAX_CHAR);
 	const [loading, setLoading] = useState(false);
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { username } = useParams();
 	const { handleImageChange, image, setImage } = usePreviewImage();
 	const showToast = useShowToast();
 	const imageRef = useRef(null);
@@ -68,6 +72,9 @@ const CreatePost = () => {
 				return;
 			}
 			showToast("Success", "Post created", "success");
+			if (username === user.username) {
+				setPosts([data, ...posts]);
+			}
 			onClose();
 			setPostText("");
 			setImage("");
@@ -77,19 +84,19 @@ const CreatePost = () => {
 			setLoading(false);
 		}
 	};
-    
 
 	return (
 		<>
 			<Button
 				position={"fixed"}
 				bottom={10}
-				right={10}
-				leftIcon={<AddIcon />}
+				right={3}
 				onClick={onOpen}
 				bg={useColorModeValue("gray.300", "gray.darkest")}
+				_hover={{ bg: useColorModeValue("gray.400", "gray.mid") }}
+				display={{ base: "none", md: "block" }}
 			>
-				Post
+				<AddIcon />
 			</Button>
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />

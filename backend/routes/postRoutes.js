@@ -5,9 +5,9 @@ import {
 	deletePost,
 	getPost,
 	likeUnlikePost,
-    replyToPost,
-    getFeedPosts, 
-	getUserPosts
+	replyToPost,
+	getFeedPosts,
+	getUserPosts,
 } from "../controllers/postController.js";
 
 const router = express.Router();

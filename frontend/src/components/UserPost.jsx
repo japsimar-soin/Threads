@@ -5,16 +5,13 @@ import { BsThreeDots } from "react-icons/bs";
 // import { useToast } from "@chakra-ui/react";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
-import Actions from "./Actions";
+// import Actions from "./Actions";
 
-const UserPost = ({ postImg, postTitle, likes, replies }) => {
+const UserPost = ({ postImage, postTitle, likes, replies }) => {
 	// const [liked, setLiked] = useState(false);
 	const savePost = () => {};
 	const copyLink = () => {};
 	const reportProfile = () => {};
-
-
-
 
 	return (
 		<Link to="/user4/post/1">
@@ -108,19 +105,19 @@ const UserPost = ({ postImg, postTitle, likes, replies }) => {
 						</Flex>
 					</Flex>
 					<Text fontSize={"sm"}>{postTitle}</Text>
-					{postImg && (
+					{postImage && (
 						<Box
 							borderRadius={6}
 							overflow={"hidden"}
 							border={"1px solid"}
 							borderColor={"gray.light"}
 						>
-							<Image src={postImg} w={"full"}></Image>
+							<Image src={postImage} w={"full"}></Image>
 						</Box>
 					)}
-					<Flex gap={3} my={1}>
-						{/* <Actions post={post} /> */}
-					</Flex>
+					{/* <Flex gap={3} my={1}>
+						<Actions post={post} />
+					</Flex> */}
 					<Flex gap={2} alignItems={"center"}>
 						<Text color={"gray.light"} fontSize={"sm"}>
 							{replies} replies
