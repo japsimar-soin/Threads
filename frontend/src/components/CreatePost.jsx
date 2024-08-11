@@ -52,8 +52,10 @@ const CreatePost = () => {
 			setRemainChar(MAX_CHAR - inputText.length);
 		}
 	};
+
 	const handleCreatePost = async () => {
 		setLoading(true);
+
 		try {
 			const res = await fetch(`/api/posts/create`, {
 				method: "POST",
@@ -66,16 +68,20 @@ const CreatePost = () => {
 					image: image,
 				}),
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
+
 			showToast("Success", "Post created", "success");
+
 			if (username === user.username) {
 				setPosts([data, ...posts]);
 			}
 			onClose();
+
 			setPostText("");
 			setImage("");
 		} catch (error) {
@@ -98,6 +104,7 @@ const CreatePost = () => {
 			>
 				<AddIcon />
 			</Button>
+
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
 				<ModalContent>

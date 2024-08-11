@@ -31,39 +31,48 @@ const Post = ({ post, postedBy }) => {
 	const handleDeletePost = async (e) => {
 		try {
 			e.preventDefault();
+
 			if (!window.confirm("Delete this post?")) return;
+
 			const res = await fetch(`/api/posts/${post._id}`, {
 				method: "DELETE",
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
+
 			showToast("Success", "Post deleted", "success");
 			setPosts(posts.filter((p) => p._id !== post._id));
 		} catch (error) {
 			showToast("Error", error.message, "error");
 		}
 	};
+
 	// const savePost = () => {};
 	// const copyLink = () => {};
 	// const reportProfile = () => {};
+
 	useEffect(() => {
 		const getUser = async () => {
 			try {
 				const res = await fetch("/api/users/profile/" + postedBy);
+
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
 					return;
 				}
+
 				setUser(data);
 			} catch (error) {
 				showToast("Error", error.message, "error");
 				setUser(null);
 			}
 		};
+
 		getUser();
 	}, [postedBy, showToast]);
 
@@ -87,7 +96,7 @@ const Post = ({ post, postedBy }) => {
 					<Box w={"1px"} h={"full"} bg={"gray.light"} my={2} />
 					<Box position={"relative"} w={"full"}>
 						{post.replies.length === 0 && <Text textAlign={"center"}>🥱</Text>}
-						
+
 						{post.replies[0] && (
 							<Avatar
 								size={"xs"}
@@ -99,6 +108,7 @@ const Post = ({ post, postedBy }) => {
 								p={"2px"}
 							/>
 						)}
+
 						{post.replies[1] && (
 							<Avatar
 								size={"xs"}
@@ -156,6 +166,7 @@ const Post = ({ post, postedBy }) => {
 						</Flex>
 					</Flex>
 					<Text fontSize={"sm"}>{post.text}</Text>
+
 					{post.image && (
 						<Box
 							borderRadius={6}
@@ -166,6 +177,7 @@ const Post = ({ post, postedBy }) => {
 							<Image src={post.image} w={"full"} />
 						</Box>
 					)}
+
 					<Flex gap={3} my={1}>
 						<Actions post={post} />
 					</Flex>

@@ -13,32 +13,35 @@ import {
 	Spinner,
 	useDisclosure,
 } from "@chakra-ui/react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useRef, useState } from "react";
 import { IoSendSharp } from "react-icons/io5";
-import useShowToast from "../hooks/useShowToast";
+import { RiImageAddFill } from "react-icons/ri";
 import {
 	conversationAtom,
 	selectedConversationAtom,
 } from "../atoms/conversationAtom";
-import { RiImageAddFill } from "react-icons/ri";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import useShowToast from "../hooks/useShowToast";
 import usePreviewImage from "../hooks/usePreviewImage";
 
 const MessageInput = ({ setMessages }) => {
-	const [messageText, setMessageText] = useState("");
 	const selectedConversation = useRecoilValue(selectedConversationAtom);
+	const setConversations = useSetRecoilState(conversationAtom);
 	const showToast = useShowToast();
 	const imageRef = useRef(null);
 	const { onClose } = useDisclosure();
 	const { handleImageChange, image, setImage } = usePreviewImage();
-	const setConversations = useSetRecoilState(conversationAtom);
+	const [messageText, setMessageText] = useState("");
 	const [isSending, setIsSending] = useState(false);
 
 	const handleSendMessage = async (e) => {
 		e.preventDefault();
+
 		if (!messageText && !image) return;
 		if (isSending) return;
+
 		setIsSending(true);
+
 		try {
 			const res = await fetch("/api/messages", {
 				method: "POST",
@@ -49,13 +52,14 @@ const MessageInput = ({ setMessages }) => {
 					image: image,
 				}),
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
+
 			setMessages((messages) => [...messages, data]);
-			// console.log(data);
 
 			setConversations((prevConversation) => {
 				const updatedConversations = prevConversation.map((conversation) => {
@@ -72,6 +76,7 @@ const MessageInput = ({ setMessages }) => {
 				});
 				return updatedConversations;
 			});
+
 			setMessageText("");
 			setImage("");
 		} catch (error) {
@@ -80,6 +85,7 @@ const MessageInput = ({ setMessages }) => {
 			setIsSending(false);
 		}
 	};
+
 	return (
 		<Flex gap={2} alignItems={"center"}>
 			<form onSubmit={handleSendMessage} style={{ flex: 95 }}>
@@ -97,6 +103,7 @@ const MessageInput = ({ setMessages }) => {
 					</InputRightElement>
 				</InputGroup>
 			</form>
+
 			<Flex flex={5} cursor={"pointer"}>
 				<RiImageAddFill size={20} onClick={() => imageRef.current.click()} />
 				<Input
@@ -106,6 +113,7 @@ const MessageInput = ({ setMessages }) => {
 					onChange={handleImageChange}
 				/>
 			</Flex>
+
 			<Modal
 				isOpen={image}
 				onClose={() => {

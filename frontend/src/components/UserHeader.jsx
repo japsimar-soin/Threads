@@ -9,26 +9,25 @@ import {
 } from "@chakra-ui/react";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
+import { useRecoilValue } from "recoil";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
 import { Link as RouterLink } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
-import useFollowUnfollow from "../hooks/useFollowUnfollow";
 import useShowToast from "../hooks/useShowToast";
+import useFollowUnfollow from "../hooks/useFollowUnfollow";
 
 const UserHeader = ({ user }) => {
 	const showToast = useShowToast();
 	const currentUser = useRecoilValue(userAtom);
-	const {handleFollowUnfollow, following, updating} = useFollowUnfollow(user);
-	
+	const { handleFollowUnfollow, following, updating } = useFollowUnfollow(user);
+
 	const copyURL = () => {
 		const currentURL = window.location.href;
 		navigator.clipboard.writeText(currentURL).then(() => {
 			showToast("Success", "URL copied to clipboard", "success");
 		});
 	};
-
 
 	return (
 		<VStack gap={4} alignItems={"start"}>
@@ -50,6 +49,7 @@ const UserHeader = ({ user }) => {
 						</Text>
 					</Flex>
 				</Box>
+
 				<Box>
 					{user.profilePic && (
 						<Avatar
@@ -61,6 +61,7 @@ const UserHeader = ({ user }) => {
 							}}
 						/>
 					)}
+
 					{!user.profilePic && (
 						<Avatar
 							name={user.name}
@@ -80,17 +81,20 @@ const UserHeader = ({ user }) => {
 					<Button size={"sm"}>Update profile</Button>
 				</Link>
 			)}
+
 			{currentUser?._id !== user._id && (
 				<Button size={"sm"} onClick={handleFollowUnfollow} isLoading={updating}>
 					{following ? "Unfollow" : "Follow"}
 				</Button>
 			)}
+
 			<Flex w={"full"} justifyContent={"space-between"}>
 				<Flex gap={2} alignItems={"center"}>
 					<Text color={"gray.light"}>{user.followers.length} followers</Text>
 					<Box w={1} h={1} bg={"gray.light"} borderRadius={"full"}></Box>
 					<Link color={"gray.light"}>instagram.com</Link>
 				</Flex>
+
 				<Flex>
 					<Box className="icon-container">
 						<BsInstagram
@@ -99,8 +103,9 @@ const UserHeader = ({ user }) => {
 								md: "24",
 							}}
 							cursor={"pointer"}
-						></BsInstagram>
+						/>
 					</Box>
+
 					<Box className="icon-container">
 						<Menu>
 							<MenuButton>
@@ -121,6 +126,7 @@ const UserHeader = ({ user }) => {
 					</Box>
 				</Flex>
 			</Flex>
+
 			<Flex w={"full"}>
 				<Flex
 					flex={1}

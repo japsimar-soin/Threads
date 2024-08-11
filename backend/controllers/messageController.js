@@ -27,6 +27,7 @@ async function sendMessage(req, res) {
 			const uploadedResponse = await cloudinary.uploader.upload(image);
 			image = uploadedResponse.secure_url;
 		}
+
 		const newMessage = new Message({
 			conversationId: conversation._id,
 			sender: senderId,
@@ -65,6 +66,7 @@ async function getMessages(req, res) {
 		if (!conversation) {
 			return res.status(404).json({ error: "Conversation not found" });
 		}
+
 		const messages = await Message.find({
 			conversationId: conversation._id,
 		}).sort({ createdAt: 1 });
@@ -84,11 +86,13 @@ async function getConversations(req, res) {
 			path: "participants",
 			select: "username profilePic",
 		});
+
 		conversations.forEach((conversation) => {
 			conversation.participants = conversation.participants.filter(
 				(participant) => participant._id.toString() !== userId.toString()
 			);
 		});
+
 		res.status(200).json(conversations);
 	} catch (error) {
 		res.status(500).json({ error: error.message });

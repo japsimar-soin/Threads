@@ -1,11 +1,11 @@
 import { atom } from "recoil";
- 
+
 const conversationAtom = atom({
 	key: "conversationAtom",
 	default: [],
 });
 
- const selectedConversationAtom = atom({
+const selectedConversationAtom = atom({
 	key: "selectedConversationAtom",
 	default: {
 		_id: "",
@@ -15,4 +15,4 @@ const conversationAtom = atom({
 	},
 });
 
-export {conversationAtom, selectedConversationAtom};
+export { conversationAtom, selectedConversationAtom };

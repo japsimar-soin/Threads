@@ -4,6 +4,7 @@ import useShowToast from "./useShowToast";
 const usePreviewImage = () => {
 	const [image, setImage] = useState(null);
 	const showToast = useShowToast();
+
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
 		if (file && file.type.startsWith("image/")) {
@@ -17,6 +18,7 @@ const usePreviewImage = () => {
 			setImage(null);
 		}
 	};
+
 	return { handleImageChange, image, setImage };
 };
 

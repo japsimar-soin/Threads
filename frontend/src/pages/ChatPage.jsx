@@ -9,56 +9,56 @@ import {
 	Text,
 	useColorModeValue,
 } from "@chakra-ui/react";
-import Conversation from "../components/Conversation";
-import { GiConversation } from "react-icons/gi";
-import MessageContainer from "../components/MessageContainer";
-import { useEffect, useState } from "react";
-import useShowToast from "../hooks/useShowToast";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { useSocket } from "../context/SocketContext";
+import { useEffect, useState } from "react";
+import { GiConversation } from "react-icons/gi";
 import {
 	conversationAtom,
 	selectedConversationAtom,
 } from "../atoms/conversationAtom";
 import userAtom from "../atoms/userAtom";
-import { useSocket } from "../context/SocketContext";
-
+import MessageContainer from "../components/MessageContainer";
+import Conversation from "../components/Conversation";
+import useShowToast from "../hooks/useShowToast";
 
 const ChatPage = () => {
-	const showToast = useShowToast();
 	const [loadingConversations, setLoadingConversations] = useState(true);
 	const [conversations, setConversations] = useRecoilState(conversationAtom);
+	const [searchText, setSearchText] = useState("");
+	const [searchingUser, setSearchingUser] = useState(false);
 	const [selectedConversation, setSelectedConversation] = useRecoilState(
 		selectedConversationAtom
 	);
-	const currentUser = useRecoilValue(userAtom);
-	const [searchText, setSearchText] = useState("");
-	const [searchingUser, setSearchingUser] = useState(false);
 	const { socket, onlineUsers } = useSocket();
+	const currentUser = useRecoilValue(userAtom);
+	const showToast = useShowToast();
 
 	useEffect(() => {
-		socket?.on("messageSeen", ({conversationId}) => {
-			setConversations(prev => {
-				const updatedConversations = prev.map(conversation => {
-					if(conversation._id === conversationId){
+		socket?.on("messageSeen", ({ conversationId }) => {
+			setConversations((prev) => {
+				const updatedConversations = prev.map((conversation) => {
+					if (conversation._id === conversationId) {
 						return {
 							...conversation,
 							lastMessage: {
 								...conversation.lastMessage,
-								seen: true
-							}
-						}
+								seen: true,
+							},
+						};
 					}
 					return conversation;
-				})
+				});
 				return updatedConversations;
-			})
-		})
-	}, [socket, setConversations])
+			});
+		});
+	}, [socket, setConversations]);
 
 	useEffect(() => {
 		const getConversations = async () => {
 			try {
 				const res = await fetch("/api/messages/conversations");
+
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
@@ -72,19 +72,23 @@ const ChatPage = () => {
 				setLoadingConversations(false);
 			}
 		};
+
 		getConversations();
 	}, [showToast, setConversations]);
 
 	const handleConversationSearch = async (e) => {
 		e.preventDefault();
 		setSearchingUser(true);
+
 		try {
 			const res = await fetch(`/api/users/profile/${searchText}`);
+
 			const searchedUser = await res.json();
 			if (searchedUser.error) {
 				showToast("Error", searchedUser.error, "error");
 				return;
 			}
+
 			const messsagingYourself = searchedUser._id === currentUser._id;
 			if (messsagingYourself) {
 				showToast("Error", "You cannot message yourself", "error");
@@ -167,6 +171,7 @@ const ChatPage = () => {
 					>
 						Your convos
 					</Text>
+
 					<form onSubmit={handleConversationSearch}>
 						<Flex alignItems={"center"} gap={2}>
 							<Input
@@ -201,6 +206,7 @@ const ChatPage = () => {
 								</Flex>
 							</Flex>
 						))}
+
 					{!loadingConversations &&
 						conversations.map((conversation) => (
 							<Conversation
@@ -212,6 +218,7 @@ const ChatPage = () => {
 							/>
 						))}
 				</Flex>
+
 				{!selectedConversation._id && (
 					<Flex
 						flex={70}
@@ -226,6 +233,7 @@ const ChatPage = () => {
 						<Text fontSize={20}>Select a conversation to start messaging</Text>
 					</Flex>
 				)}
+
 				{selectedConversation._id && <MessageContainer />}
 			</Flex>
 		</Box>

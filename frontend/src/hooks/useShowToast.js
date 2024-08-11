@@ -3,6 +3,7 @@ import { useCallback } from "react";
 
 const useShowToast = () => {
 	const toast = useToast();
+
 	const showToast = useCallback(
 		(title, description, status) => {
 			toast({
@@ -15,6 +16,7 @@ const useShowToast = () => {
 		},
 		[toast]
 	);
+
 	return showToast;
 };
 

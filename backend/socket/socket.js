@@ -1,6 +1,6 @@
-import { Server } from "socket.io";
-import http from "http";
 import express from "express";
+import http from "http";
+import { Server } from "socket.io";
 import Message from "../models/messageModel.js";
 import Conversation from "../models/conversationModel.js";
 
@@ -16,6 +16,7 @@ const io = new Server(server, {
 export const getRecipientSocketId = (recipientId) => {
 	return userSocketMap[recipientId];
 };
+
 const userSocketMap = {};
 
 io.on("connection", (socket) => {
@@ -34,10 +35,12 @@ io.on("connection", (socket) => {
 				{ conversationId: conversationId, seen: false },
 				{ $set: { seen: true } }
 			);
+
 			await Conversation.updateOne(
 				{ _id: conversationId },
 				{ $set: { "lastMessage.seen": true } }
 			);
+
 			io.to(userSocketMap[userId]).emit("messageSeen", { conversationId });
 		} catch (error) {
 			console.log(error);

@@ -1,7 +1,7 @@
-import User from "../models/userModel.js";
-import Post from "../models/postModel.js";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import User from "../models/userModel.js";
+import Post from "../models/postModel.js";
 import generateToken from "../utils/generateToken.js";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -21,6 +21,7 @@ const getUser = async (req, res) => {
 		if (!user) {
 			return res.status(404).json({ error: "User not found." });
 		}
+
 		res.status(200).json(user);
 	} catch (error) {
 		res.status(500).json({ error: error.message });

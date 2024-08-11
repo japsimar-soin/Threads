@@ -14,29 +14,31 @@ import {
 	useColorModeValue,
 	Link,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 import { useSetRecoilState } from "recoil";
 import authAtom from "../atoms/authAtom";
-import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
+import useShowToast from "../hooks/useShowToast";
 
 export default function SignupCard() {
-	const [showPassword, setShowPassword] = useState(false);
 	const showToast = useShowToast();
 	const setUser = useSetRecoilState(userAtom);
 	const setAuthScreen = useSetRecoilState(authAtom);
+	const [showPassword, setShowPassword] = useState(false);
 	const [inputs, setInputs] = useState({
 		name: "",
 		username: "",
 		email: "",
 		password: "",
 	});
+
 	const handleSignup = async () => {
 		if (inputs.password.length < 6) {
 			showToast("Error", "password needs minimum 6 characters", "error");
 			return;
 		}
+
 		try {
 			const res = await fetch("/api/users/signup", {
 				method: "POST",
@@ -45,6 +47,7 @@ export default function SignupCard() {
 				},
 				body: JSON.stringify(inputs),
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
@@ -136,6 +139,7 @@ export default function SignupCard() {
 								</InputRightElement>
 							</InputGroup>
 						</FormControl>
+
 						<Stack spacing={10} pt={2}>
 							<Button
 								loadingText="Submitting"
@@ -150,6 +154,7 @@ export default function SignupCard() {
 								Sign up
 							</Button>
 						</Stack>
+
 						<Stack pt={6}>
 							<Text align={"center"}>
 								Already a user?{" "}

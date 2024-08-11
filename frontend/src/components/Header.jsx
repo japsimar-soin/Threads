@@ -14,12 +14,10 @@ import { BsChatDots } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link as RouterLink } from "react-router-dom";
 import userAtom from "../atoms/userAtom";
-// import authAtom from "../atoms/authAtom";
 
 const Header = () => {
 	const { colorMode, toggleColorMode } = useColorMode();
 	const user = useRecoilValue(userAtom);
-	// const setAuthScreen = useSetRecoilState(authAtom);
 
 	return (
 		<Flex
@@ -41,17 +39,7 @@ const Header = () => {
 					<GoHome size={24} />
 				</Link>
 			)}
-			{/* {!user && (
-				<Link
-					as={RouterLink}
-					display={{ base: "none", md: "block" }}
-					position={{ base: "absolute", md: "static" }}
-					left={{ base: 0 }}
-					onClick={() => setAuthScreen("login")}
-				>
-					Login
-				</Link>
-			)} */}
+
 			<Image
 				cursor={"pointer"}
 				alt="logo"
@@ -131,17 +119,6 @@ const Header = () => {
 						<TbMenu2 />
 					</Link>
 				)} */}
-			{/* {!user && (
-				<Link
-					as={RouterLink}
-					display={{ base: "none", md: "block" }}
-					// position={{ base: "absolute", md: "static" }}
-					// right={{ base: 0 }}
-					onClick={() => setAuthScreen("signup")}
-				>
-					Sign up
-				</Link>
-			)} */}
 		</Flex>
 	);
 };

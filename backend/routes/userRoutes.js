@@ -8,7 +8,7 @@ import {
 	updateUser,
 	getUser,
 	getSuggestedUsers,
-	freezeUserAccount
+	freezeUserAccount,
 } from "../controllers/userController.js";
 
 const router = express.Router();

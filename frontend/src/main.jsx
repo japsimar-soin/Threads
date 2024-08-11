@@ -9,6 +9,7 @@ import { extendTheme } from "@chakra-ui/theme-utils";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import { SocketContextProvider } from "./context/SocketContext.jsx";
+
 const styles = {
 	global: (props) => ({
 		body: {

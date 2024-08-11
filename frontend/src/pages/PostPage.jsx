@@ -8,25 +8,25 @@ import {
 	Spinner,
 	Text,
 } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { useRecoilState, useRecoilValue } from "recoil";
 // import { BsThreeDots } from "react-icons/bs";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { DeleteIcon } from "@chakra-ui/icons";
-import { useRecoilState, useRecoilValue } from "recoil";
 import { formatDistanceToNow } from "date-fns";
+import userAtom from "../atoms/userAtom";
+import postAtom from "../atoms/postAtom";
 import Actions from "../components/Actions";
 import Comment from "../components/Comment";
 import useShowToast from "../hooks/useShowToast";
 import useGetUserProfile from "../hooks/useGetUserProfile";
 // import useGetPostCreationTime from "../hooks/useGetPostCreationTime";
-import userAtom from "../atoms/userAtom";
-import postAtom from "../atoms/postAtom";
 
 const PostPage = () => {
-	const { user, loading } = useGetUserProfile();
 	const [posts, setPosts] = useRecoilState(postAtom);
-	const showToast = useShowToast();
+	const { user, loading } = useGetUserProfile();
 	const { pid } = useParams();
+	const showToast = useShowToast();
 	const currentUser = useRecoilValue(userAtom);
 	const navigate = useNavigate();
 	const currentPost = posts[0]; // Ensure currentPost is not undefined
@@ -34,21 +34,25 @@ const PostPage = () => {
 	useEffect(() => {
 		const getPost = async () => {
 			setPosts([]);
+
 			try {
 				const res = await fetch(`/api/posts/${pid}`);
+
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
 					return;
 				}
-				console.log(data);
+
 				setPosts([data]);
 			} catch (error) {
 				showToast("Error", error.message, "error");
 			}
 		};
+
 		getPost();
 	}, [showToast, pid, setPosts]);
+
 	// const currentPost = posts[0];
 	// const { numericValue, unit } = useGetPostCreationTime(currentPost.createdAt);
 	// const { numericValue, unit } = useGetPostCreationTime(currentPost?.createdAt); // Default to current date if createdAt is undefined
@@ -59,11 +63,13 @@ const PostPage = () => {
 			const res = await fetch(`/api/posts/${currentPost._id}`, {
 				method: "DELETE",
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
+
 			showToast("Success", "Post deleted", "success");
 			navigate(`/${user.username}`);
 		} catch (error) {
@@ -78,13 +84,18 @@ const PostPage = () => {
 			</Flex>
 		);
 	}
+
 	if (!currentPost) return null;
-	console.log("currentPost", currentPost);
+
 	return (
 		<>
 			<Flex>
 				<Flex w={"full"} alignItems={"center"} gap={3}>
-					<Avatar src={user.profilePic} size={"md"} name={user.username}></Avatar>
+					<Avatar
+						src={user.profilePic}
+						size={"md"}
+						name={user.username}
+					></Avatar>
 					<Flex alignItems={"center"}>
 						<Text fontSize={"sm"} fontWeight={"bold"}>
 							{user.username}
@@ -92,6 +103,7 @@ const PostPage = () => {
 						<Image src="/verified.png" w="4" h="4" ml="2" />
 					</Flex>
 				</Flex>
+
 				<Flex gap={1} alignItems={"center"}>
 					<Text
 						fontSize={"sm"}
@@ -114,6 +126,7 @@ const PostPage = () => {
 				</Flex>
 			</Flex>
 			<Text my={3}>{currentPost.text}</Text>
+
 			{currentPost.image && (
 				<Box
 					borderRadius={6}
@@ -124,11 +137,13 @@ const PostPage = () => {
 					<Image src={currentPost.image} w={"full"}></Image>
 				</Box>
 			)}
+
 			<Flex gap={3} my={3}>
 				<Actions post={currentPost} />
 			</Flex>
 
-			<Divider my={4}></Divider>
+			<Divider my={4} />
+
 			<Flex justifyContent={"space-between"}>
 				<Flex gap={2} alignItems={"center"}>
 					<Text fontSize={"2xl"}>👋</Text>
@@ -136,7 +151,9 @@ const PostPage = () => {
 				</Flex>
 				<Button>Get</Button>
 			</Flex>
+
 			<Divider my={4} />
+
 			{currentPost.replies.map((reply) => (
 				<Comment
 					key={reply._id}

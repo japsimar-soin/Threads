@@ -11,6 +11,7 @@ const SuggestedUsers = () => {
 	useEffect(() => {
 		const getSuggestedUsers = async () => {
 			setLoading(true);
+
 			try {
 				const res = await fetch("api/users/suggested");
 				const data = await res.json();
@@ -27,6 +28,7 @@ const SuggestedUsers = () => {
 				setLoading(false);
 			}
 		};
+
 		getSuggestedUsers();
 	}, [showToast]);
 
@@ -40,6 +42,7 @@ const SuggestedUsers = () => {
 					suggestedUsers.map((user) => (
 						<SuggestedUser key={user._id} user={user} />
 					))}
+
 				{loading &&
 					[0, 1, 2, 3, 4].map((_, i) => (
 						<Flex

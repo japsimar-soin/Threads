@@ -8,38 +8,40 @@ import {
 	Text,
 	useColorModeValue,
 } from "@chakra-ui/react";
-import Message from "./Message";
-import MessageInput from "./MessageInput";
+import { useSocket } from "../context/SocketContext";
 import { useEffect, useRef, useState } from "react";
-import useShowToast from "../hooks/useShowToast";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
 	conversationAtom,
 	selectedConversationAtom,
 } from "../atoms/conversationAtom";
 import userAtom from "../atoms/userAtom";
-import { useSocket } from "../context/SocketContext";
+import Message from "./Message";
+import MessageInput from "./MessageInput";
+import useShowToast from "../hooks/useShowToast";
 import notificationSound from "../assets/sounds/notification.mp3";
 
 const MessageContainer = () => {
 	const showToast = useShowToast();
 	const selectedConversation = useRecoilValue(selectedConversationAtom);
-	const [messages, setMessages] = useState([]);
-	const [loadingMessages, setLoadingMessages] = useState(true);
 	const currentUser = useRecoilValue(userAtom);
-	const { socket } = useSocket();
 	const setConversations = useSetRecoilState(conversationAtom);
 	const messageEndRef = useRef(null);
+	const [messages, setMessages] = useState([]);
+	const [loadingMessages, setLoadingMessages] = useState(true);
+	const { socket } = useSocket();
 
 	useEffect(() => {
 		socket.on("newMessage", (message) => {
 			if (selectedConversation._id === message.conversationId) {
 				setMessages((prev) => [...prev, message]);
 			}
-			if(!document.hasFocus()){
-			const sound = new Audio(notificationSound);
-			sound.play();
+
+			if (!document.hasFocus()) {
+				const sound = new Audio(notificationSound);
+				sound.play();
 			}
+
 			setConversations((prevConversations) => {
 				const updatedConversations = prevConversations.map((conversation) => {
 					if (conversation._id === message.conversationId) {
@@ -64,6 +66,7 @@ const MessageContainer = () => {
 		const lastMessageFromOtherUser =
 			messages.length &&
 			messages[messages.length - 1].sender !== currentUser._id;
+
 		if (lastMessageFromOtherUser) {
 			socket.emit("markMessageSeen", {
 				conversationId: selectedConversation._id,
@@ -97,6 +100,7 @@ const MessageContainer = () => {
 		const getMessages = async () => {
 			setLoadingMessages(true);
 			setMessages([]);
+
 			try {
 				if (selectedConversation.mock) return;
 				const res = await fetch(`/api/messages/${selectedConversation.userId}`);
@@ -106,6 +110,7 @@ const MessageContainer = () => {
 					showToast("Error", data.error, "error");
 					return;
 				}
+
 				setMessages(data);
 			} catch (error) {
 				showToast("Error", error.message, "error");
@@ -113,6 +118,7 @@ const MessageContainer = () => {
 				setLoadingMessages(false);
 			}
 		};
+
 		getMessages();
 	}, [showToast, selectedConversation.userId, selectedConversation.mock]);
 
@@ -132,12 +138,15 @@ const MessageContainer = () => {
 					p={1}
 					mb={2}
 				/>
+
 				<Text display={"flex"} alignItems={"center"}>
 					{selectedConversation.username}{" "}
 					<Image src={"/verified.png"} h={4} w={4} ml={1} />
 				</Text>
 			</Flex>
+
 			<Divider />
+
 			<Flex
 				flexDirection={"column"}
 				gap={4}
@@ -165,6 +174,7 @@ const MessageContainer = () => {
 							{i % 2 !== 0 && <SkeletonCircle size={7} />}
 						</Flex>
 					))}
+
 				{!loadingMessages &&
 					messages.map((message) => (
 						<Flex
@@ -183,6 +193,7 @@ const MessageContainer = () => {
 						</Flex>
 					))}
 			</Flex>
+
 			<MessageInput setMessages={setMessages} />
 		</Flex>
 	);

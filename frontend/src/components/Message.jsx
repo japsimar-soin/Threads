@@ -1,13 +1,13 @@
 import { Avatar, Box, Flex, Image, Skeleton, Text } from "@chakra-ui/react";
+import { BsCheck2All } from "react-icons/bs";
+import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { selectedConversationAtom } from "../atoms/conversationAtom";
 import userAtom from "../atoms/userAtom";
-import { BsCheck2All } from "react-icons/bs";
-import { useState } from "react";
 
 const Message = ({ ownMessage, message }) => {
-	const selectedConversation = useRecoilValue(selectedConversationAtom);
 	const user = useRecoilValue(userAtom);
+	const selectedConversation = useRecoilValue(selectedConversationAtom);
 	const [imageLoaded, setImageLoaded] = useState(false);
 
 	return (
@@ -27,6 +27,7 @@ const Message = ({ ownMessage, message }) => {
 							</Box>
 						</Flex>
 					)}
+
 					{message.image && !imageLoaded && (
 						<Flex mt={5} w={"200px"}>
 							<Image
@@ -39,13 +40,10 @@ const Message = ({ ownMessage, message }) => {
 							<Skeleton w={"200px"} h={"200px"} />
 						</Flex>
 					)}
+
 					{message.image && imageLoaded && (
 						<Flex mt={5} w={"200px"}>
-							<Image
-								src={message.image}
-								alt={"Image"}
-								borderRadius={4}
-							/>
+							<Image src={message.image} alt={"Image"} borderRadius={4} />
 							<Box
 								alignSelf={"flex-end"}
 								ml={1}
@@ -62,6 +60,7 @@ const Message = ({ ownMessage, message }) => {
 			) : (
 				<Flex gap={2}>
 					<Avatar src={selectedConversation.userProfilePic} w={8} h={8} />
+
 					{message.text && (
 						<Text
 							maxW={"350px"}
@@ -73,6 +72,7 @@ const Message = ({ ownMessage, message }) => {
 							{message.text}
 						</Text>
 					)}
+
 					{message.image && !imageLoaded && (
 						<Flex mt={5} w={"200px"}>
 							<Image
@@ -85,14 +85,10 @@ const Message = ({ ownMessage, message }) => {
 							<Skeleton w={"200px"} h={"200px"} />
 						</Flex>
 					)}
+
 					{message.image && imageLoaded && (
 						<Flex mt={5} w={"200px"}>
-							<Image
-								src={message.image}								
-								alt={"Image"}
-								borderRadius={4}
-							/>
-							
+							<Image src={message.image} alt={"Image"} borderRadius={4} />
 						</Flex>
 					)}
 				</Flex>

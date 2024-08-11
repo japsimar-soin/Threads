@@ -11,18 +11,19 @@ import {
 	WrapItem,
 } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import userAtom from "../atoms/userAtom";
 import { BsCheck2All, BsFillImageFill } from "react-icons/bs";
 import { selectedConversationAtom } from "../atoms/conversationAtom";
+import userAtom from "../atoms/userAtom";
 
 const Conversation = ({ conversation, isOnline }) => {
 	const user = conversation.participants[0];
 	const currentuser = useRecoilValue(userAtom);
 	const lastMessage = conversation.lastMessage;
+	const colorMode = useColorMode();
 	const [selectedConversation, setSelectedConversation] = useRecoilState(
 		selectedConversationAtom
 	);
-	const colorMode = useColorMode();
+
 	return (
 		<Flex
 			gap={4}
@@ -63,6 +64,7 @@ const Conversation = ({ conversation, isOnline }) => {
 					{isOnline ? <AvatarBadge boxSize={"1em"} bg={"green.500"} /> : ""}
 				</Avatar>
 			</WrapItem>
+
 			<Stack direction={"column"} fontSize={"sm"}>
 				<Text fontWeight={"700"} display={"flex"} alignItems={"center"}>
 					{user.username} <Image src="/verified.png" w={4} h={4} ml={1} />
@@ -77,7 +79,7 @@ const Conversation = ({ conversation, isOnline }) => {
 					)}
 					{lastMessage.text.length > 15
 						? lastMessage.text.substring(0, 15) + "..."
-						: lastMessage.text || <BsFillImageFill size={16}/>}
+						: lastMessage.text || <BsFillImageFill size={16} />}
 				</Text>
 			</Stack>
 		</Flex>

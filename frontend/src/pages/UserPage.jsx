@@ -17,16 +17,17 @@ const UserPage = () => {
 
 	useEffect(() => {
 		const getPosts = async () => {
-			
-			if(!user) return;
+			if (!user) return;
 			setFetchingPosts(true);
 			try {
 				const res = await fetch(`/api/posts/user/${username}`);
+
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
 					return;
 				}
+
 				setPosts(data);
 			} catch (error) {
 				showToast("Error", error, "error");
@@ -35,6 +36,7 @@ const UserPage = () => {
 				setFetchingPosts(false);
 			}
 		};
+
 		getPosts();
 	}, [username, showToast, setPosts, user]);
 
@@ -53,12 +55,15 @@ const UserPage = () => {
 	return (
 		<>
 			<UserHeader user={user} />
+
 			{!fetchingPosts && posts.length === 0 && <h1>Nothing posted yet</h1>}
+
 			{fetchingPosts && (
 				<Flex justifyContent={"center"} my={12}>
 					<Spinner size={"xl"} />
 				</Flex>
 			)}
+
 			{posts.map((post) => (
 				<Post key={post._id} post={post} postedBy={post.postedBy} />
 			))}

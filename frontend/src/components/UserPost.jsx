@@ -1,14 +1,11 @@
-import { Link } from "react-router-dom";
 import { Avatar, Box, Flex, Image, Text, Button } from "@chakra-ui/react";
-import { BsThreeDots } from "react-icons/bs";
-// import { useState } from "react";
-// import { useToast } from "@chakra-ui/react";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
-// import Actions from "./Actions";
+import { Link } from "react-router-dom";
+import { BsThreeDots } from "react-icons/bs";
 
 const UserPost = ({ postImage, postTitle, likes, replies }) => {
-	// const [liked, setLiked] = useState(false);
+
 	const savePost = () => {};
 	const copyLink = () => {};
 	const reportProfile = () => {};

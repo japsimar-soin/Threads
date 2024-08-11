@@ -4,6 +4,7 @@ import { useMemo } from "react";
 const useGetPostCreationTime = (createdAt) => {
 	const extractNumericValueAndUnit = (distanceString) => {
 		const match = distanceString.match(/(\d+)\s+(\w+)/);
+		
 		if (match) {
 			const numericValue = parseInt(match[1], 10);
 			let unit = match[2];

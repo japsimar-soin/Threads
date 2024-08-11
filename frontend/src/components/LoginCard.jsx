@@ -13,25 +13,27 @@ import {
 	useColorModeValue,
 	Link,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 import { useSetRecoilState } from "recoil";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
 import authAtom from "../atoms/authAtom";
 
 export default function LoginCard() {
-	const [showPassword, setShowPassword] = useState(false);
-	const [loading, setLoading] = useState(false);
 	const showToast = useShowToast();
 	const setUser = useSetRecoilState(userAtom);
 	const setAuthScreen = useSetRecoilState(authAtom);
+	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [inputs, setInputs] = useState({
 		username: "",
 		password: "",
 	});
+
 	const handleLogin = async () => {
 		setLoading(true);
+
 		try {
 			const res = await fetch("/api/users/login", {
 				method: "POST",
@@ -40,11 +42,13 @@ export default function LoginCard() {
 				},
 				body: JSON.stringify(inputs),
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
+
 			localStorage.setItem("user-info", JSON.stringify(data));
 			setUser(data);
 		} catch (error) {

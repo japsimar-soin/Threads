@@ -5,6 +5,7 @@ import userAtom from "../atoms/userAtom";
 const useLogout = () => {
 	const setUser = useSetRecoilState(userAtom);
 	const showToast = useShowToast();
+
 	const logout = async () => {
 		try {
 			const res = await fetch("/api/users/logout", {
@@ -13,11 +14,13 @@ const useLogout = () => {
 					"Content-Type": "application/json",
 				},
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
+
 			localStorage.removeItem("user-info");
 			setUser(null);
 		} catch (error) {

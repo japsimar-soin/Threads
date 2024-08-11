@@ -20,6 +20,7 @@ import useShowToast from "../hooks/useShowToast";
 
 export default function UpdateProfilePage() {
 	const [user, setUser] = useRecoilState(userAtom);
+	const [updating, setUpdating] = useState(false);
 	const [inputs, setInputs] = useState({
 		name: user.name,
 		username: user.username,
@@ -27,19 +28,21 @@ export default function UpdateProfilePage() {
 		bio: user.bio,
 		password: "",
 	});
-	const fileRef = useRef(null);
-	const [updating, setUpdating] = useState(false);
-	const showToast = useShowToast();
 	const { handleImageChange, image } = usePreviewImage();
+	const fileRef = useRef(null);
+	const showToast = useShowToast();
+
 	// const renderPasswordPlaceholder = () => {
 	// 	return "*".repeat(inputs.password.length);
 	// };
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (updating) {
 			return;
 		}
 		setUpdating(true);
+
 		try {
 			const res = await fetch(`/api/users/update/${user._id}`, {
 				method: "PUT",
@@ -48,11 +51,13 @@ export default function UpdateProfilePage() {
 				},
 				body: JSON.stringify({ ...inputs, profilePic: image }),
 			});
+
 			const data = await res.json();
 			if (data.error) {
 				showToast("Error", data.error, "error");
 				return;
 			}
+
 			showToast("Success", "Profile updated", "success");
 			setUser(data);
 			localStorage.setItem("user-info", JSON.stringify(data));
