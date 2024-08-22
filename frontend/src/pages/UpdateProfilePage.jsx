@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { useRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 import userAtom from "../atoms/userAtom";
 import usePreviewImage from "../hooks/usePreviewImage";
 import useShowToast from "../hooks/useShowToast";
@@ -30,11 +31,12 @@ export default function UpdateProfilePage() {
 	});
 	const { handleImageChange, image } = usePreviewImage();
 	const fileRef = useRef(null);
+	const navigate = useNavigate();
 	const showToast = useShowToast();
-
-	// const renderPasswordPlaceholder = () => {
-	// 	return "*".repeat(inputs.password.length);
-	// };
+	
+	const handleCancel = () => {
+		navigate("/"); 
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -172,7 +174,6 @@ export default function UpdateProfilePage() {
 								setInputs({ ...inputs, password: e.target.value })
 							}
 							placeholder="password"
-							// placeholder={renderPasswordPlaceholder}
 							_placeholder={{ color: "gray.500" }}
 						/>
 					</FormControl>
@@ -184,6 +185,7 @@ export default function UpdateProfilePage() {
 								bg: useColorModeValue("gray.verylight", "gray.lighter"),
 							}}
 							type="button"
+							onClick={handleCancel}
 						>
 							Cancel
 						</Button>

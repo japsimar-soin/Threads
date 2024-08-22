@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import useFollowUnfollow from "../hooks/useFollowUnfollow";
 
@@ -13,7 +13,7 @@ const SuggestedUser = ({ user }) => {
 					<Text fontSize={"sm"} fontWeight={"bold"}>
 						{user.username}
 					</Text>
-					<Text color={"gray.light"} fontSize={"sm"}>
+					<Text color={useColorModeValue("gray.light", "gray.lightest")} fontSize={"sm"}>
 						{user.name}
 					</Text>
 				</Box>

@@ -6,31 +6,48 @@ import {
 	VStack,
 	Avatar,
 	Button,
+	Divider,
 } from "@chakra-ui/react";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
 import { useRecoilValue } from "recoil";
-import { BsInstagram } from "react-icons/bs";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { BsInstagram, BsSave } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
-import { Link as RouterLink } from "react-router-dom";
+import {
+	IoSettingsOutline,
+	IoCopyOutline,
+	IoShareSocial,
+} from "react-icons/io5";
 import userAtom from "../atoms/userAtom";
+import useShare from "../hooks/useShare";
 import useShowToast from "../hooks/useShowToast";
 import useFollowUnfollow from "../hooks/useFollowUnfollow";
 
 const UserHeader = ({ user }) => {
 	const showToast = useShowToast();
 	const currentUser = useRecoilValue(userAtom);
+	const navigate = useNavigate();
 	const { handleFollowUnfollow, following, updating } = useFollowUnfollow(user);
+	const { shareProfile } = useShare();
 
-	const copyURL = () => {
+	const handleCopyProfile = () => {
 		const currentURL = window.location.href;
 		navigator.clipboard.writeText(currentURL).then(() => {
 			showToast("Success", "URL copied to clipboard", "success");
 		});
 	};
 
+	const handleShareProfile = () => {
+		shareProfile(user.username);
+	};
+
+	const showSavedPosts =() =>{
+		navigate("/saved");
+	}
+
 	return (
-		<VStack gap={4} alignItems={"start"}>
+		<VStack gap={4} alignItems={"start"} mb={8}>
 			<Flex justifyContent={"space-between"} w={"full"}>
 				<Box>
 					<Text fontSize={"2xl"} fontWeight={"bold"}>
@@ -91,7 +108,7 @@ const UserHeader = ({ user }) => {
 			<Flex w={"full"} justifyContent={"space-between"}>
 				<Flex gap={2} alignItems={"center"}>
 					<Text color={"gray.light"}>{user.followers.length} followers</Text>
-					<Box w={1} h={1} bg={"gray.light"} borderRadius={"full"}></Box>
+					<Box w={1} h={1} bg={"gray.light"} borderRadius={"full"} />
 					<Link color={"gray.light"}>instagram.com</Link>
 				</Flex>
 
@@ -109,45 +126,53 @@ const UserHeader = ({ user }) => {
 					<Box className="icon-container">
 						<Menu>
 							<MenuButton>
-								<CgMoreO size={24} cursor={"pointer"}></CgMoreO>
+								<CgMoreO size={24} cursor={"pointer"} />
 							</MenuButton>
 							<Portal>
 								<MenuList bg={"gray.darkest"}>
 									<MenuItem
+										icon={<IoCopyOutline size={20} />}
 										bg={"gray.darkest"}
 										_hover={{ bg: "gray.darker" }}
-										onClick={copyURL}
+										onClick={handleCopyProfile}
 									>
-										Copy Link
+										Copy Profile Link
 									</MenuItem>
+									<MenuItem
+										icon={<IoShareSocial size={20} />}
+										bg={"gray.darkest"}
+										_hover={{ bg: "gray.darker" }}
+										onClick={handleShareProfile}
+									>
+										Share Profile
+									</MenuItem>
+									{currentUser?._id === user._id && (
+										<>
+											<MenuItem
+												icon={<BsSave size={20} />}
+												bg={"gray.darkest"}
+												_hover={{ bg: "gray.darker" }}
+												onClick={showSavedPosts}
+											>
+												Saved Posts
+											</MenuItem>
+											<MenuItem
+												icon={<IoSettingsOutline size={20} />}
+												bg={"gray.darkest"}
+												_hover={{ bg: "gray.darker" }}
+												// onClick={openSettings}
+											>
+												Settings
+											</MenuItem>
+										</>
+									)}
 								</MenuList>
 							</Portal>
 						</Menu>
 					</Box>
 				</Flex>
 			</Flex>
-
-			<Flex w={"full"}>
-				<Flex
-					flex={1}
-					borderBottom={"1.5px solid white"}
-					justifyContent={"center"}
-					pb={3}
-					cursor={"pointer"}
-				>
-					<Text fontWeight={"bold"}>Threads</Text>
-				</Flex>
-				<Flex
-					flex={1}
-					borderBottom={"1.5px solid gray"}
-					justifyContent={"center"}
-					pb={3}
-					color={"gray.light"}
-					cursor={"pointer"}
-				>
-					<Text fontWeight={"bold"}>Replies</Text>
-				</Flex>
-			</Flex>
+			<Divider />
 		</VStack>
 	);
 };

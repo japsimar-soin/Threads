@@ -1,5 +1,6 @@
-import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
+import Post from "../models/postModel.js";
+import Repost from "../models/repostModel.js";
 import { v2 as cloudinary } from "cloudinary";
 
 const createPost = async (req, res) => {
@@ -100,6 +101,7 @@ const likeUnlikePost = async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 };
+
 const replyToPost = async (req, res) => {
 	try {
 		const { text } = req.body;
@@ -127,6 +129,51 @@ const replyToPost = async (req, res) => {
 	}
 };
 
+const repostPost = async (req, res) => {
+	try {
+		const postId = req.params.id;
+		const userId = req.user._id;
+
+		const originalPost = await Post.findById(postId).populate("postedBy");
+		if (!originalPost) {
+			return res.status(404).json({ error: "Post not found" });
+		}
+
+		const newRepost = new Repost({
+			post: originalPost._id,
+			repostedBy: userId,
+		});
+
+		await newRepost.save();
+
+		const repostedPost = await Post.findById(originalPost._id)
+			.populate("postedBy")
+			.exec();
+
+		res.status(201).json({
+			...repostedPost.toObject(),
+			isRepost: true,
+			repostedBy: userId,
+		});
+		// const response = {
+		// 	_id: newRepost._id,
+		// 	post: {
+		// 		_id: originalPost._id,
+		// 		content: originalPost.content,
+		// 		postedBy: originalPost.postedBy,
+
+		// 	},
+		// 	repostedBy: newRepost.repostedBy,
+		// 	isRepost: true,
+		// 	createdAt: newRepost.createdAt,
+		// 	updatedAt: newRepost.updatedAt,
+		// };
+		// res.status(201).json(response);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
 const getFeedPosts = async (req, res) => {
 	try {
 		const userId = req.user._id;
@@ -134,12 +181,57 @@ const getFeedPosts = async (req, res) => {
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
 		}
+		const followingNotFrozen = await User.find({
+			_id: { $in: user.following },
+			isFrozen: false,
+		}).select("_id");
+		const followingIds = followingNotFrozen.map(
+			(followingUser) => followingUser._id
+		);
 
-		const following = user.following;
-		const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({
-			createdAt: -1,
-		});
+		const originalPosts = await Post.find({
+			postedBy: { $in: followingIds },
+		})
+			.populate("postedBy", "_id username name profilePicture")
+			.sort({ createdAt: -1 });
 
+		const reposts = await Repost.find({
+			repostedBy: { $in: followingIds },
+		})
+			.populate({
+				path: "post",
+				populate: {
+					path: "postedBy",
+					select: "_id username name profilePicture",
+				},
+			})
+			.populate({
+				path: "repostedBy",
+				select: "_id username name profilePicture",
+			})
+			.sort({ createdAt: -1 });
+
+		const feedPosts = [
+			...originalPosts
+				.filter((post) => post.postedBy._id.toString() !== userId.toString())
+				.map((post) => ({
+					...post.toObject(),
+					isRepost: false,
+					postedBy: post.postedBy,
+				})),
+			...reposts
+				.filter(
+					(repost) => repost.repostedBy._id.toString() !== userId.toString()
+				)
+				.map((repost) => ({
+					...repost.post.toObject(),
+					isRepost: true,
+					repostedBy: repost.repostedBy,
+					postedBy: repost.post.postedBy,
+				})),
+		];
+
+		feedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 		res.status(200).json(feedPosts);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -147,7 +239,7 @@ const getFeedPosts = async (req, res) => {
 };
 
 const getUserPosts = async (req, res) => {
-	const { username } = req.params;
+	const  username  = req.params.username;
 
 	try {
 		const user = await User.findOne({ username });
@@ -155,11 +247,39 @@ const getUserPosts = async (req, res) => {
 			return res.status(404).json({ error: "User not found" });
 		}
 
-		const posts = await Post.find({ postedBy: user._id }).sort({
+		const originalPosts = await Post.find({ postedBy: user._id }).populate("postedBy", "_id username name profilePicture").sort({
 			createdAt: -1,
 		});
 
-		res.status(200).json(posts);
+		const reposts = await Repost.find({ repostedBy: user._id })
+			.populate({
+				path: "post",
+				populate: {
+					path: "postedBy",
+					select: "_id username name profilePicture",
+				},
+			})
+			.populate({
+				path: "repostedBy",
+				select: "_id username name profilePicture",
+			})
+			.sort({ createdAt: -1 });
+
+		const combinedPosts = [
+			...originalPosts.map((post) => ({
+				...post.toObject(),
+				isRepost: false,
+				postedBy: post.postedBy,
+			})),
+			...reposts.map((repost) => ({
+				...repost.post.toObject(),
+				isRepost: true,
+				repostedBy: repost.repostedBy,
+				postedBy: repost.post.postedBy,
+			})),
+		].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+		res.status(200).json(combinedPosts);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -173,4 +293,5 @@ export {
 	replyToPost,
 	getFeedPosts,
 	getUserPosts,
+	repostPost,
 };

@@ -5,31 +5,38 @@ import {
 	Divider,
 	Flex,
 	Image,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Portal,
 	Spinner,
 	Text,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { useRecoilState, useRecoilValue } from "recoil";
-// import { BsThreeDots } from "react-icons/bs";
 import { useEffect } from "react";
+import { BsThreeDots } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
 import userAtom from "../atoms/userAtom";
 import postAtom from "../atoms/postAtom";
 import Actions from "../components/Actions";
 import Comment from "../components/Comment";
 import useShowToast from "../hooks/useShowToast";
 import useGetUserProfile from "../hooks/useGetUserProfile";
-// import useGetPostCreationTime from "../hooks/useGetPostCreationTime";
+import useGetPostCreationTime from "../hooks/useGetPostCreationTime";
+import useSaveUnsavePost from "../hooks/useSaveUnsavePost";
 
 const PostPage = () => {
 	const [posts, setPosts] = useRecoilState(postAtom);
 	const { user, loading } = useGetUserProfile();
 	const { pid } = useParams();
+	const {handleSaveUnsave, saving, saved} = useSaveUnsavePost(pid);
 	const showToast = useShowToast();
 	const currentUser = useRecoilValue(userAtom);
 	const navigate = useNavigate();
-	const currentPost = posts[0]; // Ensure currentPost is not undefined
+	const currentPost = posts.length > 0 ? posts[0] : null;
+	const timeAgo = useGetPostCreationTime(currentPost?.createdAt || new Date());
 
 	useEffect(() => {
 		const getPost = async () => {
@@ -53,9 +60,14 @@ const PostPage = () => {
 		getPost();
 	}, [showToast, pid, setPosts]);
 
-	// const currentPost = posts[0];
-	// const { numericValue, unit } = useGetPostCreationTime(currentPost.createdAt);
-	// const { numericValue, unit } = useGetPostCreationTime(currentPost?.createdAt); // Default to current date if createdAt is undefined
+	if (loading || !currentPost) {
+		return (
+			<Flex justifyContent={"center"}>
+				<Spinner size={"xl"} />
+			</Flex>
+		);
+	}
+
 
 	const handleDeletePost = async () => {
 		try {
@@ -80,7 +92,7 @@ const PostPage = () => {
 	if (!user && loading) {
 		return (
 			<Flex justifyContent={"center"}>
-				<Spinner size={"xl"}></Spinner>
+				<Spinner size={"xl"} />
 			</Flex>
 		);
 	}
@@ -89,13 +101,9 @@ const PostPage = () => {
 
 	return (
 		<>
-			<Flex>
+			<Flex mt={6}>
 				<Flex w={"full"} alignItems={"center"} gap={3}>
-					<Avatar
-						src={user.profilePic}
-						size={"md"}
-						name={user.username}
-					></Avatar>
+					<Avatar src={user.profilePic} size={"md"} name={user.username} />
 					<Flex alignItems={"center"}>
 						<Text fontSize={"sm"} fontWeight={"bold"}>
 							{user.username}
@@ -111,20 +119,45 @@ const PostPage = () => {
 						textAlign={"right"}
 						width={36}
 					>
-						{formatDistanceToNow(new Date(currentPost.createdAt))} ago
-						{/* {numericValue + unit} ago */}
+						{timeAgo} ago
 					</Text>
 
-					{currentUser?._id === user._id && (
-						<DeleteIcon
-							size={20}
-							ml={4}
-							cursor={"pointer"}
-							onClick={handleDeletePost}
-						/>
-					)}
+					<Box className="icon-container">
+						<Menu>
+							<MenuButton>
+								<BsThreeDots size={24} cursor={"pointer"} />
+							</MenuButton>
+							<Portal>
+								<MenuList bg={"gray.darkest"}>
+									
+									<MenuItem
+										bg={"gray.darkest"}
+										_hover={{ bg: "gray.darker" }}
+										onClick={handleSaveUnsave}
+										
+									>
+										{saving && (
+											<Flex alignItems={"center"} justifyContent={"center"}>
+												<Spinner size={"sm"}/>
+											</Flex>
+										)}
+
+										{!saving && (saved ? "Unsave" : "Save")}
+									</MenuItem>
+									<MenuItem
+										bg={"gray.darkest"}
+										_hover={{ bg: "gray.darker" }}
+										onClick={""}
+									>
+										Report
+									</MenuItem>
+								</MenuList>
+							</Portal>
+						</Menu>
+					</Box>
 				</Flex>
 			</Flex>
+
 			<Text my={3}>{currentPost.text}</Text>
 
 			{currentPost.image && (
@@ -134,13 +167,26 @@ const PostPage = () => {
 					border={"1px solid"}
 					borderColor={"gray.light"}
 				>
-					<Image src={currentPost.image} w={"full"}></Image>
+					<Image src={currentPost.image} w={"full"} />
 				</Box>
 			)}
+
 
 			<Flex gap={3} my={3}>
 				<Actions post={currentPost} />
 			</Flex>
+
+			{currentUser?._id === user._id && (
+				<Flex
+					justifyContent="flex-end"
+					mt="auto"
+					pb={4}
+					pr={1}
+					alignItems="center"
+				>
+					<DeleteIcon size={20} onClick={handleDeletePost} />
+				</Flex>
+			)}
 
 			<Divider my={4} />
 

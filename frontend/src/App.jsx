@@ -12,6 +12,7 @@ import AuthPage from "./pages/AuthPage";
 import ChatPage from "./pages/ChatPage";
 import SettingsPage from "./pages/SettingsPage";
 import UpdateProfilePage from "./pages/UpdateProfilePage";
+import SavedPostsPage from "./pages/SavedPostsPage";
 
 function App() {
 	const user = useRecoilValue(userAtom);
@@ -19,10 +20,11 @@ function App() {
 
 	return (
 		<Box position={"relative"} w={"full"}>
+			<Header />
 			<Container
-				maxW={pathname === "/" ? { base: "620px", md: "900px" } : "620px"}
+				maxW={pathname === "/" ? { base: "620px", md: "800px" } : "620px"}
+				pt={40}
 			>
-				<Header />
 				<Routes>
 					<Route
 						path="/"
@@ -36,20 +38,21 @@ function App() {
 						path="/update"
 						element={user ? <UpdateProfilePage /> : <Navigate to="/auth" />}
 					/>
-					<Route
+					{
+						/* <Route
 						path="/:username"
 						element={
-							user ? (
-								<>
-									<UserPage />
-									<CreatePost />
-								</>
-							) : (
-								<UserPage />
-							)
-						}
-					/>
-					<Route path="/:username/post/:pid" element={<PostPage />} />
+							// user ? (
+							// <>
+							<UserPage />
+							/* <CreatePost /> */
+						// </>
+						// ) : (
+						// 	<UserPage />
+						// )*/
+					}
+					<Route path="/:username" element={<UserPage />} />
+					{/* <Route path="/:username/post/:pid" element={<PostPage />} /> */}
 					<Route
 						path="/chat"
 						element={user ? <ChatPage /> : <Navigate to="/auth" />}
@@ -57,6 +60,10 @@ function App() {
 					<Route
 						path="/settings"
 						element={user ? <SettingsPage /> : <Navigate to="/auth" />}
+					/>
+					<Route
+						path="/saved"
+						element={user ? <SavedPostsPage /> : <Navigate to="/auth" />}
 					/>
 				</Routes>
 				{user && <LogoutButton />}

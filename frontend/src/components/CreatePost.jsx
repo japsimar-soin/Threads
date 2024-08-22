@@ -15,31 +15,20 @@ import {
 	Text,
 	Textarea,
 	useColorModeValue,
-	useDisclosure,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 import { useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import { RiImageAddFill } from "react-icons/ri";
-import { useRecoilState, useRecoilValue } from "recoil";
-import userAtom from "../atoms/userAtom";
-import postAtom from "../atoms/postAtom";
-import useShowToast from "../hooks/useShowToast";
 import usePreviewImage from "../hooks/usePreviewImage";
+import useCreatePost from "../hooks/useCreatePost";
 
 const MAX_CHAR = 500;
 
-const CreatePost = () => {
+const CreatePost = ({ isOpen, onClose }) => {
 	const [postText, setPostText] = useState("");
-	const [posts, setPosts] = useRecoilState(postAtom);
 	const [remainChar, setRemainChar] = useState(MAX_CHAR);
-	const [loading, setLoading] = useState(false);
-	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { username } = useParams();
 	const { handleImageChange, image, setImage } = usePreviewImage();
-	const showToast = useShowToast();
+	const { createPost, loading } = useCreatePost();
 	const imageRef = useRef(null);
-	const user = useRecoilValue(userAtom);
 
 	const handleTextChange = (e) => {
 		const inputText = e.target.value;
@@ -53,47 +42,13 @@ const CreatePost = () => {
 		}
 	};
 
-	const handleCreatePost = async () => {
-		setLoading(true);
-
-		try {
-			const res = await fetch(`/api/posts/create`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					postedBy: user._id,
-					text: postText,
-					image: image,
-				}),
-			});
-
-			const data = await res.json();
-			if (data.error) {
-				showToast("Error", data.error, "error");
-				return;
-			}
-
-			showToast("Success", "Post created", "success");
-
-			if (username === user.username) {
-				setPosts([data, ...posts]);
-			}
-			onClose();
-
-			setPostText("");
-			setImage("");
-		} catch (error) {
-			showToast("Error", error.message, "error");
-		} finally {
-			setLoading(false);
-		}
+	const handleCreatePost = () => {
+		createPost(postText, image, onClose, setPostText, setImage);
 	};
 
 	return (
 		<>
-			<Button
+			{/* <Button
 				position={"fixed"}
 				bottom={10}
 				right={3}
@@ -103,7 +58,7 @@ const CreatePost = () => {
 				display={{ base: "none", md: "block" }}
 			>
 				<AddIcon />
-			</Button>
+			</Button> */}
 
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
@@ -140,6 +95,7 @@ const CreatePost = () => {
 								onClick={() => imageRef.current.click()}
 							/>
 						</FormControl>
+
 						{image && (
 							<Flex mt={5} w={"full"} position={"relative"}>
 								<Image src={image} alt={"Selected image"} />

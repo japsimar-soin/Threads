@@ -2,13 +2,15 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import User from "../models/userModel.js";
 import Post from "../models/postModel.js";
+import Repost from "../models/repostModel.js";
 import generateToken from "../utils/generateToken.js";
 import { v2 as cloudinary } from "cloudinary";
 
 const getUser = async (req, res) => {
-	const { query } = req.params;
+	const query  = req.params.query;
 	try {
 		let user;
+		// console.log(query);
 		if (mongoose.Types.ObjectId.isValid(query)) {
 			user = await User.findOne({ _id: query })
 				.select("-password")
@@ -18,14 +20,16 @@ const getUser = async (req, res) => {
 				.select("-password")
 				.select("-updatedAt");
 		}
+		// console.log(user);
 		if (!user) {
+			console.log("User not found:", query); // Debug log for user not found
 			return res.status(404).json({ error: "User not found." });
 		}
-
+		console.log("User found:", user); // Debug log for successful user fetch
 		res.status(200).json(user);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
 		console.log("Error while trying to get user profile : ", error.message);
+		res.status(500).json({ error: error.message });
 	}
 };
 
@@ -234,6 +238,70 @@ const freezeUserAccount = async (req, res) => {
 	}
 };
 
+const saveUnsavePost = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const { postId } = req.params;
+
+		const user = await User.findById(userId);
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		const post = await Post.findById(postId);
+		if (!post) {
+			const repost = await Repost.findById(postId).populate("post");
+			if (!repost) {
+				return res.status(404).json({ message: "Post or repost not found" });
+			}
+			// Use the original post
+			post = repost.post;
+		}
+
+		const isPostSaved = user.savedPosts.some(
+			(savedPost) => savedPost._id.toString() === post._id.toString()
+		);
+		if (isPostSaved) {
+			user.savedPosts = user.savedPosts.filter(
+				(savedPost) => savedPost._id.toString() !== post._id.toString()
+			);
+			await user.save();
+			return res.status(200).json({
+				message: "Post removed from saved posts",
+				isSaved: !isPostSaved,
+			});
+		} else {
+			user.savedPosts.push(post);
+			await user.save();
+			return res
+				.status(200)
+				.json({ message: "Post saved", isSaved: !isPostSaved });
+		}
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
+const getSavedPosts = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const user = await User.findById(userId).populate({
+			path: "savedPosts",
+			populate: {
+				path: "postedBy",
+				select: "_id username name profilePicture",
+			},
+		});
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+		res.status(200).json(user.savedPosts);
+	} catch (error) {
+		console.error("Error fetching saved posts:", error);
+		res.status(500).json({ error: "Server error" });
+	}
+};
+
 export {
 	signupUser,
 	loginUser,
@@ -243,4 +311,6 @@ export {
 	getUser,
 	getSuggestedUsers,
 	freezeUserAccount,
+	saveUnsavePost,
+	getSavedPosts,
 };

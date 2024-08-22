@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Flex, Spinner } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Divider, Flex, Spinner } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import postAtom from "../atoms/postAtom";
@@ -7,6 +7,7 @@ import Post from "../components/Post";
 import UserHeader from "../components/UserHeader";
 import useShowToast from "../hooks/useShowToast";
 import useGetUserProfile from "../hooks/useGetUserProfile";
+import Repost from "../components/Repost";
 
 const UserPage = () => {
 	const { user, loading } = useGetUserProfile();
@@ -17,17 +18,18 @@ const UserPage = () => {
 
 	useEffect(() => {
 		const getPosts = async () => {
-			if (!user) return;
+			if (!user||loading) return;
 			setFetchingPosts(true);
 			try {
 				const res = await fetch(`/api/posts/user/${username}`);
+				// console.log(res);
 
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
 					return;
 				}
-
+// console.log(data);
 				setPosts(data);
 			} catch (error) {
 				showToast("Error", error, "error");
@@ -38,7 +40,7 @@ const UserPage = () => {
 		};
 
 		getPosts();
-	}, [username, showToast, setPosts, user]);
+	}, [username, showToast, loading, setPosts, user]);
 
 	if (!user && loading) {
 		return (
@@ -64,9 +66,22 @@ const UserPage = () => {
 				</Flex>
 			)}
 
-			{posts.map((post) => (
+			{posts.map((post, i) => {
+				// console.log(post);
+				return (
+					<React.Fragment key={i}>
+						{post.isRepost ? (
+							<Repost post={post} repostedBy={post.repostedBy.username} />
+						) : (
+							<Post post={post} postedBy={post.postedBy} />
+						)}
+						<Divider />
+					</React.Fragment>
+				);
+			})}
+			{/* {posts.map((post) => (
 				<Post key={post._id} post={post} postedBy={post.postedBy} />
-			))}
+			))} */}
 		</>
 	);
 };

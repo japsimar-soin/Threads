@@ -1,41 +1,53 @@
-import { formatDistanceToNow } from "date-fns";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
+import { formatDistanceToNowStrict } from "date-fns";
 
-const useGetPostCreationTime = (createdAt) => {
-	const extractNumericValueAndUnit = (distanceString) => {
-		const match = distanceString.match(/(\d+)\s+(\w+)/);
-		
-		if (match) {
-			const numericValue = parseInt(match[1], 10);
-			let unit = match[2];
-			const unitMap = {
-				second: "s",
-				seconds: "s",
-				minute: "m",
-				minutes: "m",
-				hour: "h",
-				hours: "h",
-				day: "d",
-				days: "d",
-				week: "w",
-				weeks: "w",
-				month: "mo",
-				months: "mo",
-				year: "y",
-				years: "y",
-			};
-			unit = unitMap[unit] || unit;
-			return { numericValue, unit };
-		}
-		return null;
-	};
+const getInitials = (timeAgo) => {
+	return timeAgo
+		.replace(/ years?/, "y")
+		.replace(/ months?/, "mo")
+		.replace(/ weeks?/, "w")
+		.replace(/ days?/, "d")
+		.replace(/ hours?/, "h")
+		.replace(/ minutes?/, "m")
+		.replace(/ seconds?/, "s");
+};
 
-	const result = useMemo(() => {
-		const distanceString = formatDistanceToNow(new Date(createdAt));
-		return extractNumericValueAndUnit(distanceString);
-	}, [createdAt]);
+const useGetPostCreationTime = (timestamp) => {
+	const [timeAgo, setTimeAgo] = useState("");
 
-	return result;
+	useEffect(() => {
+		const parseTimestamp = (ts) => {
+			// console.log("Parsing timestamp:", ts);
+			if (typeof ts === "string") {
+				return new Date(ts);
+			} else if (typeof ts === "number") {
+				return new Date(ts);
+			}
+			return new Date(); // Fallback to current date if parsing fails
+		};
+
+		const getTimeAgo = () => {
+			const date = parseTimestamp(timestamp);
+			// console.log("Parsed date:", date);
+			// console.log("Date.getTime:", date.getTime());
+			if (isNaN(date.getTime())) {
+				console.error("Invalid date:", timestamp);
+				return "Invalid date";
+			}
+			const timeDifference = formatDistanceToNowStrict(date);
+			return getInitials(timeDifference);
+		};
+
+		setTimeAgo(getTimeAgo());
+
+		const intervalId = setInterval(() => {
+			setTimeAgo(getTimeAgo());
+		}, 60000);
+
+		return () => clearInterval(intervalId);
+	}, [timestamp]);
+
+	return timeAgo;
 };
 
 export default useGetPostCreationTime;

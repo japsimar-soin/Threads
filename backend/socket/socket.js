@@ -1,6 +1,6 @@
+import { Server } from "socket.io";
 import express from "express";
 import http from "http";
-import { Server } from "socket.io";
 import Message from "../models/messageModel.js";
 import Conversation from "../models/conversationModel.js";
 
@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("disconnect", () => {
-		console.log("user disconneted");
+		console.log("user disconnected");
 		delete userSocketMap[userId];
 		io.emit("getOnlineUsers", Object.keys(userSocketMap));
 	});

@@ -1,8 +1,15 @@
-import { Box, Flex, Spinner } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {
+	Box,
+	Divider,
+	Flex,
+	Spinner,
+	useColorModeValue,
+} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import postAtom from "../atoms/postAtom";
 import Post from "../components/Post";
+import Repost from "../components/Repost";
 import SuggestedUsers from "../components/SuggestedUsers";
 import useShowToast from "../hooks/useShowToast";
 
@@ -15,13 +22,16 @@ const HomePage = () => {
 		const getFeedPosts = async () => {
 			setLoading(true);
 			setPosts([]);
+
 			try {
 				const res = await fetch("api/posts/feed");
+
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
 					return;
 				}
+				// console.log(data);
 				setPosts(data);
 			} catch (error) {
 				showToast("Error", error.message, "error");
@@ -33,11 +43,14 @@ const HomePage = () => {
 	}, [showToast, setPosts]);
 
 	return (
-		<Flex gap={10} alignItems={"flex-start"}>
-			<Box flex={70}>
-				{!loading && posts.length === 0 && (
-					<h1>You are not following anyone</h1>
-				)}
+		<Flex gap={4} alignItems={"flex-start"}>
+			<Box
+				flex={70}
+				borderRadius={"md"}
+				p={4}
+				bg={useColorModeValue("gray.lightest", "gray.800")}
+			>
+				{!loading && posts.length === 0 && <h1>No posts to show</h1>}
 
 				{loading && (
 					<Flex justifyContent={"center"}>
@@ -45,10 +58,21 @@ const HomePage = () => {
 					</Flex>
 				)}
 
-				{posts.map((post) => (
-					<Post key={post._id} post={post} postedBy={post.postedBy} />
-				))}
+				{posts.map((post, i) => {
+					// console.log(post);
+					return (
+						<React.Fragment key={i}>
+							{post.isRepost ? (
+								<Repost post={post} repostedBy={post.repostedBy.username} />
+							) : (
+								<Post post={post} postedBy={post.postedBy} />
+							)}
+							<Divider />
+						</React.Fragment>
+					);
+				})}
 			</Box>
+
 			<Box
 				flex={30}
 				display={{
