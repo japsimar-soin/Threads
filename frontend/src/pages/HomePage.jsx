@@ -5,7 +5,7 @@ import {
 	Spinner,
 	useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import postAtom from "../atoms/postAtom";
 import Post from "../components/Post";
@@ -24,14 +24,14 @@ const HomePage = () => {
 			setPosts([]);
 
 			try {
-				const res = await fetch("api/posts/feed");
-
+				const res = await fetch("/api/posts/feed");
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
 					return;
 				}
 				// console.log(data);
+
 				setPosts(data);
 			} catch (error) {
 				showToast("Error", error.message, "error");
@@ -39,6 +39,7 @@ const HomePage = () => {
 				setLoading(false);
 			}
 		};
+
 		getFeedPosts();
 	}, [showToast, setPosts]);
 
@@ -59,16 +60,15 @@ const HomePage = () => {
 				)}
 
 				{posts.map((post, i) => {
-					// console.log(post);
 					return (
-						<React.Fragment key={i}>
+						<Fragment key={i}>
 							{post.isRepost ? (
-								<Repost post={post} repostedBy={post.repostedBy.username} />
+								<Repost post={post} repostedBy={post.repostedBy} />
 							) : (
 								<Post post={post} postedBy={post.postedBy} />
 							)}
 							<Divider />
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 			</Box>

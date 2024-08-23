@@ -10,7 +10,6 @@ const getUser = async (req, res) => {
 	const query  = req.params.query;
 	try {
 		let user;
-		// console.log(query);
 		if (mongoose.Types.ObjectId.isValid(query)) {
 			user = await User.findOne({ _id: query })
 				.select("-password")
@@ -20,12 +19,11 @@ const getUser = async (req, res) => {
 				.select("-password")
 				.select("-updatedAt");
 		}
-		// console.log(user);
 		if (!user) {
-			console.log("User not found:", query); // Debug log for user not found
+			console.log("User not found:", query); 
 			return res.status(404).json({ error: "User not found." });
 		}
-		console.log("User found:", user); // Debug log for successful user fetch
+		// console.log("User found:", user); 
 		res.status(200).json(user);
 	} catch (error) {
 		console.log("Error while trying to get user profile : ", error.message);
@@ -254,7 +252,6 @@ const saveUnsavePost = async (req, res) => {
 			if (!repost) {
 				return res.status(404).json({ message: "Post or repost not found" });
 			}
-			// Use the original post
 			post = repost.post;
 		}
 

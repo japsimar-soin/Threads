@@ -23,14 +23,8 @@ import userAtom from "../atoms/userAtom";
 import postAtom from "../atoms/postAtom";
 import Actions from "./Actions";
 
-// import Repost from "./Repost";
-
 const Post = ({ post, postedBy }) => {
-// 	console.log("Post component re-rendered");
-//   console.log("Post:", post);
-//   console.log("Posted By:", postedBy);
 	const [user, setUser] = useState(null);
-	// const [loading, setLoading] = useState(true);
 	const [posts, setPosts] = useRecoilState(postAtom);
 	const { handleSaveUnsave, saving, saved } = useSaveUnsavePost(post._id);
 	const showToast = useShowToast();
@@ -62,19 +56,10 @@ const Post = ({ post, postedBy }) => {
 		}
 	};
 
-	// const isRepost = post.isRepost;
-
-	// const savePost = () => {};
-	// const copyLink = () => {};
-	// const reportProfile = () => {};
-
 	useEffect(() => {
 		console.log("useEffect triggered");
 		const getUser = async () => {
-			// console.log(postedBy);
-			// console.log(post);
 			try {
-				// let userId = post.isRepost ? post.repostedBy._id : postedBy._id;
 				const res = await fetch(`/api/users/profile/${postedBy._id}`);
 
 				const data = await res.json();
@@ -82,7 +67,6 @@ const Post = ({ post, postedBy }) => {
 					showToast("Error", data.error, "error");
 					return;
 				}
-				// console.log(data);
 				setUser(data);
 			} catch (error) {
 				showToast("Error", error.message, "error");
@@ -93,78 +77,12 @@ const Post = ({ post, postedBy }) => {
 		getUser();
 	}, [postedBy._id, postedBy, showToast]);
 
-
-	// useEffect(() => {
-	// 	let isMounted = true; // to prevent state update on unmounted component
-
-	// 	const getUser = async () => {
-	// 		try {
-	// 			const res = await fetch(`/api/users/profile/${postedBy._id}`);
-	// 			const data = await res.json();
-
-	// 			if (data.error) {
-	// 				if (isMounted) showToast("Error", data.error, "error");
-	// 				return;
-	// 			}
-
-	// 			if (isMounted) {
-		// 			setUser(data);
-		// 		}
-		// 	} catch (error) {
-		// 		if (isMounted) {
-		// 			showToast("Error", error.message, "error");
-		// 			setUser(null);
-		// 		}
-		// 	} finally {
-		// 		if (isMounted) {
-		// 			setLoading(false);
-		// 		}
-		// 	}
-		// };
-
-	// 	getUser();
-
-	// 	return () => {
-	// 		isMounted = false; // cleanup
-	// 	};
-	// }, [postedBy._id, showToast]);
-
-	// if (loading) {
-	// 	return (
-	// 		<Flex justifyContent="center" alignItems="center" height="100px">
-	// 			<Spinner />
-	// 		</Flex>
-	// 	);
-	// }
-
 	if (!user) {
 		return null;
 	}
 
 	return (
 		<Box>
-			{/* {post.isRepost && (
-				<>
-					<Flex mb={4} py={3} px={4} bg="gray.800" borderRadius="md">
-						<Avatar size="sm" src={post.repostedBy.profilePicture} mr={3} />
-						<Flex flexDirection="column">
-							<Flex gap={2} justifyContent={"center"} alignItems={"center"}>
-								<Text fontSize="sm" fontWeight="bold">
-									{post.repostedBy.username + " "}
-								</Text>
-								<Text fontSize={"sm"} fontWeight={"lighter"}>
-									{" "}
-									reposted this
-								</Text>
-							</Flex>
-							<Text fontSize="xs" color="gray.500">
-								{timeAgo} ago
-							</Text>
-						</Flex>
-					</Flex>
-					
-				</>
-			)} */}
 
 			<Link to={`/${user.username}/post/${post._id}`}>
 				<Flex gap={3} mb={4} py={5}>

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Divider, Flex, Spinner } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import postAtom from "../atoms/postAtom";
 import Post from "../components/Post";
+import Repost from "../components/Repost";
 import UserHeader from "../components/UserHeader";
 import useShowToast from "../hooks/useShowToast";
 import useGetUserProfile from "../hooks/useGetUserProfile";
-import Repost from "../components/Repost";
 
 const UserPage = () => {
 	const { user, loading } = useGetUserProfile();
@@ -22,14 +22,13 @@ const UserPage = () => {
 			setFetchingPosts(true);
 			try {
 				const res = await fetch(`/api/posts/user/${username}`);
-				// console.log(res);
 
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
 					return;
 				}
-// console.log(data);
+console.log(data);
 				setPosts(data);
 			} catch (error) {
 				showToast("Error", error, "error");
@@ -67,21 +66,17 @@ const UserPage = () => {
 			)}
 
 			{posts.map((post, i) => {
-				// console.log(post);
 				return (
-					<React.Fragment key={i}>
+					<Fragment key={i}>
 						{post.isRepost ? (
-							<Repost post={post} repostedBy={post.repostedBy.username} />
+							<Repost post={post} repostedBy={post.repostedBy} />
 						) : (
 							<Post post={post} postedBy={post.postedBy} />
 						)}
 						<Divider />
-					</React.Fragment>
+					</Fragment>
 				);
 			})}
-			{/* {posts.map((post) => (
-				<Post key={post._id} post={post} postedBy={post.postedBy} />
-			))} */}
 		</>
 	);
 };

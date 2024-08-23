@@ -155,20 +155,6 @@ const repostPost = async (req, res) => {
 			isRepost: true,
 			repostedBy: userId,
 		});
-		// const response = {
-		// 	_id: newRepost._id,
-		// 	post: {
-		// 		_id: originalPost._id,
-		// 		content: originalPost.content,
-		// 		postedBy: originalPost.postedBy,
-
-		// 	},
-		// 	repostedBy: newRepost.repostedBy,
-		// 	isRepost: true,
-		// 	createdAt: newRepost.createdAt,
-		// 	updatedAt: newRepost.updatedAt,
-		// };
-		// res.status(201).json(response);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -177,10 +163,12 @@ const repostPost = async (req, res) => {
 const getFeedPosts = async (req, res) => {
 	try {
 		const userId = req.user._id;
+		// console.log(userId);
 		const user = await User.findById(userId);
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
 		}
+
 		const followingNotFrozen = await User.find({
 			_id: { $in: user.following },
 			isFrozen: false,
@@ -202,12 +190,12 @@ const getFeedPosts = async (req, res) => {
 				path: "post",
 				populate: {
 					path: "postedBy",
-					select: "_id username name profilePicture",
+					select: "_id username name profilePic",
 				},
 			})
 			.populate({
 				path: "repostedBy",
-				select: "_id username name profilePicture",
+				select: "_id username name profilePic",
 			})
 			.sort({ createdAt: -1 });
 
@@ -221,7 +209,7 @@ const getFeedPosts = async (req, res) => {
 				})),
 			...reposts
 				.filter(
-					(repost) => repost.repostedBy._id.toString() !== userId.toString()
+					(repost) => repost.repostedBy._id.toString() !== userId.toString() && repost.post.postedBy._id.toString() !== userId.toString()
 				)
 				.map((repost) => ({
 					...repost.post.toObject(),
@@ -256,12 +244,12 @@ const getUserPosts = async (req, res) => {
 				path: "post",
 				populate: {
 					path: "postedBy",
-					select: "_id username name profilePicture",
+					select: "_id username name profilePic",
 				},
 			})
 			.populate({
 				path: "repostedBy",
-				select: "_id username name profilePicture",
+				select: "_id username name profilePic",
 			})
 			.sort({ createdAt: -1 });
 

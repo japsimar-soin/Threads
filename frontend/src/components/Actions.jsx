@@ -150,7 +150,7 @@ const Actions = ({ post }) => {
 				showToast("Error", data.error, "error");
 				return;
 			}
-			setPosts((prevPosts) => [data, ...prevPosts]);
+			// setPosts((prevPosts) => [data, ...prevPosts]);
 			showToast("Success", "Post reposted successfully", "success");
 		} catch (error) {
 			showToast("Error", error.message, "error");

@@ -17,23 +17,22 @@ const useGetPostCreationTime = (timestamp) => {
 
 	useEffect(() => {
 		const parseTimestamp = (ts) => {
-			// console.log("Parsing timestamp:", ts);
 			if (typeof ts === "string") {
 				return new Date(ts);
 			} else if (typeof ts === "number") {
 				return new Date(ts);
 			}
-			return new Date(); // Fallback to current date if parsing fails
+			return new Date(); 
 		};
 
 		const getTimeAgo = () => {
 			const date = parseTimestamp(timestamp);
-			// console.log("Parsed date:", date);
-			// console.log("Date.getTime:", date.getTime());
+
 			if (isNaN(date.getTime())) {
 				console.error("Invalid date:", timestamp);
 				return "Invalid date";
 			}
+			
 			const timeDifference = formatDistanceToNowStrict(date);
 			return getInitials(timeDifference);
 		};
