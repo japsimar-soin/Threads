@@ -14,18 +14,8 @@ const Comment = ({ reply, lastReply }) => {
 						<Text fontSize={"sm"} fontWeight={"bold"}>
 							{reply.username}
 						</Text>
-						{/* <Flex>
-							<Text fontSize={"sm"} color={"gray.light"}>
-								{createdAt}
-							</Text>
-							<BsThreeDots />
-						</Flex> */}
 					</Flex>
 					<Text>{reply.text}</Text>
-					{/* <Actions post={post} />
-					<Text fontSize={"sm"} color={"gray.light"}>
-						{likes + (liked ? 1 : 0)} likes
-					</Text> */}
 				</Flex>
 			</Flex>
 			{!lastReply ? <Divider my={4} /> : null}

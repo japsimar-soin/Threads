@@ -8,10 +8,10 @@ import {
 import { Fragment, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import postAtom from "../atoms/postAtom";
+import useShowToast from "../hooks/useShowToast";
 import Post from "../components/Post";
 import Repost from "../components/Repost";
 import SuggestedUsers from "../components/SuggestedUsers";
-import useShowToast from "../hooks/useShowToast";
 
 const HomePage = () => {
 	const showToast = useShowToast();
@@ -30,7 +30,6 @@ const HomePage = () => {
 					showToast("Error", data.error, "error");
 					return;
 				}
-				// console.log(data);
 
 				setPosts(data);
 			} catch (error) {
@@ -49,7 +48,7 @@ const HomePage = () => {
 				flex={70}
 				borderRadius={"md"}
 				p={4}
-				bg={useColorModeValue("gray.lightest", "gray.800")}
+				bg={useColorModeValue("gray.lightest", "gray.darker")}
 			>
 				{!loading && posts.length === 0 && <h1>No posts to show</h1>}
 

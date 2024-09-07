@@ -7,7 +7,7 @@ import generateToken from "../utils/generateToken.js";
 import { v2 as cloudinary } from "cloudinary";
 
 const getUser = async (req, res) => {
-	const query  = req.params.query;
+	const query = req.params.query;
 	try {
 		let user;
 		if (mongoose.Types.ObjectId.isValid(query)) {
@@ -19,11 +19,12 @@ const getUser = async (req, res) => {
 				.select("-password")
 				.select("-updatedAt");
 		}
+
 		if (!user) {
-			console.log("User not found:", query); 
+			console.log("User not found:", query);
 			return res.status(404).json({ error: "User not found." });
 		}
-		// console.log("User found:", user); 
+
 		res.status(200).json(user);
 	} catch (error) {
 		console.log("Error while trying to get user profile : ", error.message);
@@ -41,6 +42,7 @@ const signupUser = async (req, res) => {
 					"User with same username or email already exists. Try logging in.",
 			});
 		}
+
 		const salt = await bcrypt.genSalt(10);
 		const hashPassword = await bcrypt.hash(password, salt);
 
@@ -84,6 +86,7 @@ const loginUser = async (req, res) => {
 		}
 
 		generateToken(user._id, res);
+
 		res.status(200).json({
 			_id: user._id,
 			name: user.name,
@@ -119,9 +122,11 @@ const followUnfollowUser = async (req, res) => {
 				.status(400)
 				.json({ error: "You cannot follow/unfollow yourself." });
 		}
+
 		if (!userToFollowOrUnfollow || !currentUser) {
 			return res.status(400).json({ error: "User not found" });
 		}
+
 		const isFollowing = currentUser.following.includes(id);
 		if (isFollowing) {
 			await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } }); //remove id of userToFollowOrUnfollow from following array of currentUser
@@ -142,21 +147,25 @@ const updateUser = async (req, res) => {
 	const { name, email, username, password, bio } = req.body;
 	let { profilePic } = req.body;
 	const userId = req.user._id;
+
 	try {
 		let user = await User.findById(userId);
 		if (!user) {
 			return res.status(400).json({ error: "User not found" });
 		}
+
 		if (req.params.id !== userId.toString()) {
 			return res
 				.status(400)
 				.json({ error: "Cannot update profile of other users" });
 		}
+
 		if (password) {
 			const salt = await bcrypt.genSalt(10);
 			const hashPassword = await bcrypt.hash(password, salt);
 			user.password = hashPassword;
 		}
+
 		if (profilePic) {
 			if (user.profilePic) {
 				await cloudinary.uploader.destroy(
@@ -188,6 +197,7 @@ const updateUser = async (req, res) => {
 			}
 		);
 		user.password = null;
+
 		res.status(200).json(user);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -213,9 +223,10 @@ const getSuggestedUsers = async (req, res) => {
 		const filteredUsers = users.filter(
 			(user) => !usersYouFollow.following.includes(user._id)
 		);
-		const suggestedUsers = filteredUsers.slice(0, 4);
 
+		const suggestedUsers = filteredUsers.slice(0, 4);
 		suggestedUsers.forEach((user) => (user.password = null));
+
 		res.status(200).json(suggestedUsers);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -228,8 +239,10 @@ const freezeUserAccount = async (req, res) => {
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
 		}
+
 		user.isFrozen = true;
 		await user.save();
+
 		res.status(200).json({ success: true });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -292,6 +305,7 @@ const getSavedPosts = async (req, res) => {
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
 		}
+
 		res.status(200).json(user.savedPosts);
 	} catch (error) {
 		console.error("Error fetching saved posts:", error);

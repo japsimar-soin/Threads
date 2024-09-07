@@ -16,7 +16,8 @@ async function sendMessage(req, res) {
 			conversation = new Conversation({
 				participants: [senderId, recipientId],
 				lastMessage: {
-					text: message,
+					text: message || "",
+					isImage: !!image, 
 					sender: senderId,
 				},
 			});
@@ -31,7 +32,7 @@ async function sendMessage(req, res) {
 		const newMessage = new Message({
 			conversationId: conversation._id,
 			sender: senderId,
-			text: message,
+			text: message || "",
 			image: image || "",
 		});
 
@@ -40,6 +41,7 @@ async function sendMessage(req, res) {
 			conversation.updateOne({
 				lastMessage: {
 					text: message,
+					isImage: !!image,
 					sender: senderId,
 				},
 			}),

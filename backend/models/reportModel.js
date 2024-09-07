@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 
-const repostSchema = new mongoose.Schema(
+const reportSchema = new mongoose.Schema(
 	{
-		post: {
+		postId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Post",
 			required: true,
 		},
-		repostedBy: {
+		reason: { type: String, required: true },
+		reportedBy: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true,
@@ -16,5 +17,5 @@ const repostSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-const Repost = mongoose.model("Repost", repostSchema);
-export default Repost;
+const Report = mongoose.model("Report", reportSchema);
+export default Report;

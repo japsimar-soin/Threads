@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { BsThreeDots } from "react-icons/bs";
 
 const UserPost = ({ postImage, postTitle, likes, replies }) => {
-
 	const savePost = () => {};
 	const copyLink = () => {};
 	const reportProfile = () => {};

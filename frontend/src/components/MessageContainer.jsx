@@ -15,11 +15,12 @@ import {
 	conversationAtom,
 	selectedConversationAtom,
 } from "../atoms/conversationAtom";
+
+import notificationSound from "../assets/sounds/notification.mp3";
 import userAtom from "../atoms/userAtom";
+import useShowToast from "../hooks/useShowToast";
 import Message from "./Message";
 import MessageInput from "./MessageInput";
-import useShowToast from "../hooks/useShowToast";
-import notificationSound from "../assets/sounds/notification.mp3";
 
 const MessageContainer = () => {
 	const showToast = useShowToast();
@@ -125,7 +126,7 @@ const MessageContainer = () => {
 	return (
 		<Flex
 			flex={70}
-			bg={useColorModeValue("gray.200", "gray.darker")}
+			bg={useColorModeValue("gray.lightest", "gray.darker")}
 			borderRadius={"md"}
 			flexDirection={"column"}
 			p={2}

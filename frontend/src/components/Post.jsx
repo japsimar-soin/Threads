@@ -10,6 +10,8 @@ import {
 	Portal,
 	Spinner,
 	Text,
+	useColorMode,
+	useDisclosure,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,19 +21,27 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import useGetPostCreationTime from "../hooks/useGetPostCreationTime";
 import useSaveUnsavePost from "../hooks/useSaveUnsavePost";
 import useShowToast from "../hooks/useShowToast";
+import useReport from "../hooks/useReport";
 import userAtom from "../atoms/userAtom";
 import postAtom from "../atoms/postAtom";
 import Actions from "./Actions";
+import Report from "./Report";
 
 const Post = ({ post, postedBy }) => {
 	const [user, setUser] = useState(null);
 	const [posts, setPosts] = useRecoilState(postAtom);
 	const { handleSaveUnsave, saving, saved } = useSaveUnsavePost(post._id);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { colorMode } = useColorMode();
 	const showToast = useShowToast();
 	const timeAgo = useGetPostCreationTime(post.createdAt);
 	const navigate = useNavigate();
 	const currentUser = useRecoilValue(userAtom);
 
+	const handleReport = useReport(post._id, currentUser);
+	const handleReportSubmit = (reason) => {
+		handleReport(reason);
+	};
 
 	const handleDeletePost = async (e) => {
 		try {
@@ -57,7 +67,6 @@ const Post = ({ post, postedBy }) => {
 	};
 
 	useEffect(() => {
-		console.log("useEffect triggered");
 		const getUser = async () => {
 			try {
 				const res = await fetch(`/api/users/profile/${postedBy._id}`);
@@ -83,7 +92,6 @@ const Post = ({ post, postedBy }) => {
 
 	return (
 		<Box>
-
 			<Link to={`/${user.username}/post/${post._id}`}>
 				<Flex gap={3} mb={4} py={5}>
 					<Flex flexDirection={"column"} alignItems={"center"}>
@@ -168,6 +176,15 @@ const Post = ({ post, postedBy }) => {
 
 								<Box
 									className="icon-container"
+									borderRadius="50%"
+									p="8px"
+									w="40px"
+									h="40px"
+									transition="background-color 0.3s ease-in-out"
+									_hover={{
+										bg:
+											colorMode === "light" ? "gray.verylight" : "gray.darker",
+									}}
 									onClick={(e) => e.preventDefault()}
 								>
 									<Menu>
@@ -175,10 +192,25 @@ const Post = ({ post, postedBy }) => {
 											<BsThreeDots size={24} cursor={"pointer"} />
 										</MenuButton>
 										<Portal>
-											<MenuList bg={"gray.darkest"}>
+											<MenuList
+												bg={
+													colorMode === "light"
+														? "gray.lightest"
+														: "gray.darkest"
+												}
+											>
 												<MenuItem
-													bg={"gray.darkest"}
-													_hover={{ bg: "gray.darker" }}
+													bg={
+														colorMode === "light"
+															? "gray.lightest"
+															: "gray.darkest"
+													}
+													_hover={{
+														bg:
+															colorMode === "light"
+																? "gray.verylight"
+																: "gray.darker",
+													}}
 													onClick={handleSaveUnsave}
 												>
 													{saving && (
@@ -192,9 +224,18 @@ const Post = ({ post, postedBy }) => {
 													{!saving && (saved ? "Unsave" : "Save")}
 												</MenuItem>
 												<MenuItem
-													bg={"gray.darkest"}
-													_hover={{ bg: "gray.darker" }}
-													onClick={""}
+													bg={
+														colorMode === "light"
+															? "gray.lightest"
+															: "gray.darkest"
+													}
+													_hover={{
+														bg:
+															colorMode === "light"
+																? "gray.verylight"
+																: "gray.darker",
+													}}
+													onClick={onOpen}
 												>
 													Report
 												</MenuItem>
@@ -204,7 +245,7 @@ const Post = ({ post, postedBy }) => {
 								</Box>
 							</Flex>
 						</Flex>
-						<Text fontSize={"sm"}>{post.text}</Text>
+						{post.text && <Text fontSize={"sm"}>{post.text}</Text>}
 
 						{post.image && (
 							<Box
@@ -234,6 +275,7 @@ const Post = ({ post, postedBy }) => {
 					</Flex>
 				</Flex>
 			</Link>
+			<Report isOpen={isOpen} onClose={onClose} onSubmit={handleReportSubmit} />
 		</Box>
 	);
 };

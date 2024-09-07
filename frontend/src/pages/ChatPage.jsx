@@ -1,4 +1,3 @@
-import { SearchIcon } from "@chakra-ui/icons";
 import {
 	Box,
 	Button,
@@ -9,18 +8,19 @@ import {
 	Text,
 	useColorModeValue,
 } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
+import { GiConversation } from "react-icons/gi";
+import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useSocket } from "../context/SocketContext";
-import { useEffect, useState } from "react";
-import { GiConversation } from "react-icons/gi";
 import {
 	conversationAtom,
 	selectedConversationAtom,
 } from "../atoms/conversationAtom";
 import userAtom from "../atoms/userAtom";
+import useShowToast from "../hooks/useShowToast";
 import MessageContainer from "../components/MessageContainer";
 import Conversation from "../components/Conversation";
-import useShowToast from "../hooks/useShowToast";
 
 const ChatPage = () => {
 	const [loadingConversations, setLoadingConversations] = useState(true);
@@ -30,6 +30,7 @@ const ChatPage = () => {
 	const [selectedConversation, setSelectedConversation] = useRecoilState(
 		selectedConversationAtom
 	);
+	
 	const { socket, onlineUsers } = useSocket();
 	const currentUser = useRecoilValue(userAtom);
 	const showToast = useShowToast();

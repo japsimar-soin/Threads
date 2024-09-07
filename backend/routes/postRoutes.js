@@ -8,7 +8,7 @@ import {
 	replyToPost,
 	getFeedPosts,
 	getUserPosts,
-	repostPost
+	repostPost,
 } from "../controllers/postController.js";
 
 const router = express.Router();

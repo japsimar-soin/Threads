@@ -29,6 +29,7 @@ const MessageInput = ({ setMessages }) => {
 	const setConversations = useSetRecoilState(conversationAtom);
 	const showToast = useShowToast();
 	const imageRef = useRef(null);
+	
 	const { onClose } = useDisclosure();
 	const { handleImageChange, image, setImage } = usePreviewImage();
 	const [messageText, setMessageText] = useState("");
@@ -67,7 +68,8 @@ const MessageInput = ({ setMessages }) => {
 						return {
 							...conversation,
 							lastMessage: {
-								text: messageText,
+								text: messageText || "",
+								isImage: !!image,
 								sender: data.sender,
 							},
 						};
@@ -115,7 +117,7 @@ const MessageInput = ({ setMessages }) => {
 			</Flex>
 
 			<Modal
-				isOpen={image}
+				isOpen={!!image}
 				onClose={() => {
 					onClose();
 					setImage("");

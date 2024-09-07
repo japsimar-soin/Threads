@@ -19,10 +19,21 @@ const Conversation = ({ conversation, isOnline }) => {
 	const user = conversation.participants[0];
 	const currentuser = useRecoilValue(userAtom);
 	const lastMessage = conversation.lastMessage;
-	const colorMode = useColorMode();
+	const { colorMode } = useColorMode();
 	const [selectedConversation, setSelectedConversation] = useRecoilState(
 		selectedConversationAtom
 	);
+
+	let messagePreview;
+	if (lastMessage?.text?.length > 15) {
+		messagePreview = lastMessage.text.substring(0, 15) + "...";
+	} else if (lastMessage?.text) {
+		messagePreview = lastMessage.text;
+	} else if (lastMessage?.isImage) {
+		messagePreview = <BsFillImageFill size={16} />; // Show image icon if the message is an image
+	} else {
+		messagePreview = ""; // Show nothing if there is no text or image
+	}
 
 	return (
 		<Flex
@@ -30,9 +41,16 @@ const Conversation = ({ conversation, isOnline }) => {
 			alignItems={"center"}
 			p={1}
 			borderRadius={"md"}
+			bg={
+				selectedConversation?._id === conversation._id
+					? colorMode === "light"
+						? "gray.lightest"
+						: "gray.dark"
+					: ""
+			}
 			_hover={{
 				cursor: "pointer",
-				bg: useColorModeValue("gray.600", "gray.darkest"),
+				bg: useColorModeValue("gray.lighter", "gray.darkest"),
 				color: "white",
 			}}
 			onClick={() =>
@@ -43,13 +61,6 @@ const Conversation = ({ conversation, isOnline }) => {
 					userProfilePic: user.profilePic,
 					mock: conversation.mock,
 				})
-			}
-			bg={
-				selectedConversation?._id === conversation._id
-					? colorMode === "light"
-						? "gray.600"
-						: "gray.darker"
-					: ""
 			}
 		>
 			<WrapItem>
@@ -77,9 +88,10 @@ const Conversation = ({ conversation, isOnline }) => {
 					) : (
 						""
 					)}
-					{lastMessage.text.length > 15
+					{/* {lastMessage.text ? (lastMessage.text.length > 15
 						? lastMessage.text.substring(0, 15) + "..."
-						: lastMessage.text || <BsFillImageFill size={16} />}
+						: lastMessage.text) : lastMessage.text === "" ? "" :  <BsFillImageFill size={16} />} */}
+						{messagePreview}
 				</Text>
 			</Stack>
 		</Flex>

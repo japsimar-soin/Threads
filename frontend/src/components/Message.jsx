@@ -12,6 +12,7 @@ const Message = ({ ownMessage, message }) => {
 
 	return (
 		<>
+		
 			{ownMessage ? (
 				<Flex gap={2} alignSelf={"flex-end"}>
 					{message.text && (

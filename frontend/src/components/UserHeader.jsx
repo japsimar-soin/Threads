@@ -7,6 +7,7 @@ import {
 	Avatar,
 	Button,
 	Divider,
+	useColorMode,
 } from "@chakra-ui/react";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
@@ -30,6 +31,7 @@ const UserHeader = ({ user }) => {
 	const navigate = useNavigate();
 	const { handleFollowUnfollow, following, updating } = useFollowUnfollow(user);
 	const { shareProfile } = useShare();
+	const { colorMode } = useColorMode();
 
 	const handleCopyProfile = () => {
 		const currentURL = window.location.href;
@@ -38,13 +40,17 @@ const UserHeader = ({ user }) => {
 		});
 	};
 
+	const openSettings = () => {
+		navigate("/settings");
+	};
+
 	const handleShareProfile = () => {
 		shareProfile(user.username);
 	};
 
-	const showSavedPosts =() =>{
+	const showSavedPosts = () => {
 		navigate("/saved");
-	}
+	};
 
 	return (
 		<VStack gap={4} alignItems={"start"} mb={8}>
@@ -53,18 +59,7 @@ const UserHeader = ({ user }) => {
 					<Text fontSize={"2xl"} fontWeight={"bold"}>
 						{user.name}
 					</Text>
-					<Flex gap={2} alignItems={"center"}>
-						<Text fontSize={"sm"}>{user.username}</Text>
-						<Text
-							fontSize={"xs"}
-							bg={"gray.darkest"}
-							color={"gray.light"}
-							p={1}
-							borderRadius={"full"}
-						>
-							threads.net
-						</Text>
-					</Flex>
+					<Text fontSize={"sm"}>{user.username}</Text>
 				</Box>
 
 				<Box>
@@ -95,7 +90,12 @@ const UserHeader = ({ user }) => {
 
 			{currentUser?._id === user._id && (
 				<Link as={RouterLink} to="/update">
-					<Button size={"sm"}>Update profile</Button>
+					<Button
+						size={"sm"}
+						bg={colorMode === "light" ? "gray.lighter" : "gray.mid"}
+					>
+						Update profile
+					</Button>
 				</Link>
 			)}
 
@@ -109,39 +109,78 @@ const UserHeader = ({ user }) => {
 				<Flex gap={2} alignItems={"center"}>
 					<Text color={"gray.light"}>{user.followers.length} followers</Text>
 					<Box w={1} h={1} bg={"gray.light"} borderRadius={"full"} />
-					<Link color={"gray.light"}>instagram.com</Link>
+					<Text color={"gray.light"}>{user.following.length} following</Text>
 				</Flex>
 
 				<Flex>
-					<Box className="icon-container">
-						<BsInstagram
-							size={{
-								base: "18",
-								md: "24",
-							}}
-							cursor={"pointer"}
-						/>
+					<Box
+						className="icon-container"
+						borderRadius="50%"
+						p="8px"
+						w="40px"
+						h="40px"
+						transition="background-color 0.3s ease-in-out"
+						_hover={{
+							bg: colorMode === "light" ? "gray.verylight" : "gray.darker",
+						}}
+					>
+						<Link href="https://www.instagram.com/" isExternal>
+							<BsInstagram
+								size={{
+									base: "18",
+									md: "24",
+								}}
+								cursor={"pointer"}
+							/>
+						</Link>
 					</Box>
 
-					<Box className="icon-container">
+					<Box
+						className="icon-container"
+						borderRadius="50%"
+						p="8px"
+						w="40px"
+						h="40px"
+						transition="background-color 0.3s ease-in-out"
+						_hover={{
+							bg: colorMode === "light" ? "gray.verylight" : "gray.darker",
+						}}
+						onClick={(e) => e.preventDefault()}
+					>
 						<Menu>
 							<MenuButton>
 								<CgMoreO size={24} cursor={"pointer"} />
 							</MenuButton>
 							<Portal>
-								<MenuList bg={"gray.darkest"}>
+								<MenuList
+									bg={colorMode === "light" ? "gray.lightest" : "gray.darkest"}
+								>
 									<MenuItem
 										icon={<IoCopyOutline size={20} />}
-										bg={"gray.darkest"}
-										_hover={{ bg: "gray.darker" }}
+										bg={
+											colorMode === "light" ? "gray.lightest" : "gray.darkest"
+										}
+										_hover={{
+											bg:
+												colorMode === "light"
+													? "gray.verylight"
+													: "gray.darker",
+										}}
 										onClick={handleCopyProfile}
 									>
 										Copy Profile Link
 									</MenuItem>
 									<MenuItem
 										icon={<IoShareSocial size={20} />}
-										bg={"gray.darkest"}
-										_hover={{ bg: "gray.darker" }}
+										bg={
+											colorMode === "light" ? "gray.lightest" : "gray.darkest"
+										}
+										_hover={{
+											bg:
+												colorMode === "light"
+													? "gray.verylight"
+													: "gray.darker",
+										}}
 										onClick={handleShareProfile}
 									>
 										Share Profile
@@ -150,17 +189,35 @@ const UserHeader = ({ user }) => {
 										<>
 											<MenuItem
 												icon={<BsSave size={20} />}
-												bg={"gray.darkest"}
-												_hover={{ bg: "gray.darker" }}
+												bg={
+													colorMode === "light"
+														? "gray.lightest"
+														: "gray.darkest"
+												}
+												_hover={{
+													bg:
+														colorMode === "light"
+															? "gray.verylight"
+															: "gray.darker",
+												}}
 												onClick={showSavedPosts}
 											>
 												Saved Posts
 											</MenuItem>
 											<MenuItem
 												icon={<IoSettingsOutline size={20} />}
-												bg={"gray.darkest"}
-												_hover={{ bg: "gray.darker" }}
-												// onClick={openSettings}
+												bg={
+													colorMode === "light"
+														? "gray.lightest"
+														: "gray.darkest"
+												}
+												_hover={{
+													bg:
+														colorMode === "light"
+															? "gray.verylight"
+															: "gray.darker",
+												}}
+												onClick={openSettings}
 											>
 												Settings
 											</MenuItem>

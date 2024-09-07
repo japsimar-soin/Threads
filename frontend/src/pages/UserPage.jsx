@@ -18,7 +18,7 @@ const UserPage = () => {
 
 	useEffect(() => {
 		const getPosts = async () => {
-			if (!user||loading) return;
+			if (!user || loading) return;
 			setFetchingPosts(true);
 			try {
 				const res = await fetch(`/api/posts/user/${username}`);
@@ -28,7 +28,6 @@ const UserPage = () => {
 					showToast("Error", data.error, "error");
 					return;
 				}
-console.log(data);
 				setPosts(data);
 			} catch (error) {
 				showToast("Error", error, "error");

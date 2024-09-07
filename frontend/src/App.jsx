@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import userAtom from "./atoms/userAtom";
 import Header from "./components/Header";
-import CreatePost from "./components/CreatePost";
+// import CreatePost from "./components/CreatePost";
 import LogoutButton from "./components/LogoutButton";
 import UserPage from "./pages/UserPage";
 import PostPage from "./pages/PostPage";
@@ -38,19 +38,6 @@ function App() {
 						path="/update"
 						element={user ? <UpdateProfilePage /> : <Navigate to="/auth" />}
 					/>
-					{
-						/* <Route
-						path="/:username"
-						element={
-							// user ? (
-							// <>
-							<UserPage />
-							/* <CreatePost /> */
-						// </>
-						// ) : (
-						// 	<UserPage />
-						// )*/
-					}
 					<Route path="/:username" element={<UserPage />} />
 					<Route path="/:username/post/:pid" element={<PostPage />} />
 					<Route
@@ -67,7 +54,7 @@ function App() {
 					/>
 				</Routes>
 				{user && <LogoutButton />}
-				{user && <CreatePost />}
+				{/* {user && <CreatePost />} */}
 			</Container>
 		</Box>
 	);

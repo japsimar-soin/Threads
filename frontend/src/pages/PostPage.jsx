@@ -12,6 +12,8 @@ import {
 	Portal,
 	Spinner,
 	Text,
+	useColorMode,
+	useDisclosure,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -22,21 +24,30 @@ import userAtom from "../atoms/userAtom";
 import postAtom from "../atoms/postAtom";
 import Actions from "../components/Actions";
 import Comment from "../components/Comment";
+import Report from "../components/Report";
 import useShowToast from "../hooks/useShowToast";
+import useSaveUnsavePost from "../hooks/useSaveUnsavePost";
 import useGetUserProfile from "../hooks/useGetUserProfile";
 import useGetPostCreationTime from "../hooks/useGetPostCreationTime";
-import useSaveUnsavePost from "../hooks/useSaveUnsavePost";
+import useReport from "../hooks/useReport";
 
 const PostPage = () => {
 	const [posts, setPosts] = useRecoilState(postAtom);
 	const { user, loading } = useGetUserProfile();
 	const { pid } = useParams();
-	const {handleSaveUnsave, saving, saved} = useSaveUnsavePost(pid);
+	const { handleSaveUnsave, saving, saved } = useSaveUnsavePost(pid);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { colorMode } = useColorMode();
 	const showToast = useShowToast();
 	const currentUser = useRecoilValue(userAtom);
 	const navigate = useNavigate();
 	const currentPost = posts.length > 0 ? posts[0] : null;
 	const timeAgo = useGetPostCreationTime(currentPost?.createdAt || new Date());
+
+	const handleReport = useReport(currentPost?._id, currentUser);
+	const handleReportSubmit = (reason) => {
+		handleReport(reason);
+	};
 
 	useEffect(() => {
 		const getPost = async () => {
@@ -67,7 +78,6 @@ const PostPage = () => {
 			</Flex>
 		);
 	}
-
 
 	const handleDeletePost = async () => {
 		try {
@@ -122,32 +132,56 @@ const PostPage = () => {
 						{timeAgo} ago
 					</Text>
 
-					<Box className="icon-container">
+					<Box
+						className="icon-container"
+						borderRadius="50%"
+						p="8px"
+						w="40px"
+						h="40px"
+						transition="background-color 0.3s ease-in-out"
+						_hover={{
+							bg: colorMode === "light" ? "gray.verylight" : "gray.darker",
+						}}
+					>
 						<Menu>
 							<MenuButton>
 								<BsThreeDots size={24} cursor={"pointer"} />
 							</MenuButton>
 							<Portal>
-								<MenuList bg={"gray.darkest"}>
-									
+								<MenuList
+									bg={colorMode === "light" ? "gray.lightest" : "gray.darkest"}
+								>
 									<MenuItem
-										bg={"gray.darkest"}
-										_hover={{ bg: "gray.darker" }}
+										bg={
+											colorMode === "light" ? "gray.lightest" : "gray.darkest"
+										}
+										_hover={{
+											bg:
+												colorMode === "light"
+													? "gray.verylight"
+													: "gray.darker",
+										}}
 										onClick={handleSaveUnsave}
-										
 									>
 										{saving && (
 											<Flex alignItems={"center"} justifyContent={"center"}>
-												<Spinner size={"sm"}/>
+												<Spinner size={"sm"} />
 											</Flex>
 										)}
 
 										{!saving && (saved ? "Unsave" : "Save")}
 									</MenuItem>
 									<MenuItem
-										bg={"gray.darkest"}
-										_hover={{ bg: "gray.darker" }}
-										onClick={""}
+										bg={
+											colorMode === "light" ? "gray.lightest" : "gray.darkest"
+										}
+										_hover={{
+											bg:
+												colorMode === "light"
+													? "gray.verylight"
+													: "gray.darker",
+										}}
+										onClick={onOpen}
 									>
 										Report
 									</MenuItem>
@@ -158,8 +192,7 @@ const PostPage = () => {
 				</Flex>
 			</Flex>
 
-			<Text my={3}>{currentPost.text}</Text>
-
+			{currentPost.text && <Text my={3}>{currentPost.text}</Text>}
 			{currentPost.image && (
 				<Box
 					borderRadius={6}
@@ -170,7 +203,6 @@ const PostPage = () => {
 					<Image src={currentPost.image} w={"full"} />
 				</Box>
 			)}
-
 
 			<Flex gap={3} my={3}>
 				<Actions post={currentPost} />
@@ -189,16 +221,7 @@ const PostPage = () => {
 			)}
 
 			<Divider my={4} />
-
-			<Flex justifyContent={"space-between"}>
-				<Flex gap={2} alignItems={"center"}>
-					<Text fontSize={"2xl"}>👋</Text>
-					<Text color={"gray.light"}>get the app to like and reply</Text>
-				</Flex>
-				<Button>Get</Button>
-			</Flex>
-
-			<Divider my={4} />
+			<Text fontWeight={"bold"}>Replies</Text>
 
 			{currentPost.replies.map((reply) => (
 				<Comment
@@ -210,6 +233,17 @@ const PostPage = () => {
 					}
 				/>
 			))}
+			<Divider my={4} />
+
+			<Flex justifyContent={"space-between"}>
+				<Flex gap={2} alignItems={"center"}>
+					<Text fontSize={"2xl"}>👋</Text>
+					<Text color={"gray.light"}>get the app to like and reply</Text>
+				</Flex>
+				<Button>Get</Button>
+			</Flex>
+			<Report isOpen={isOpen} onClose={onClose} onSubmit={handleReportSubmit} />
+
 		</>
 	);
 };

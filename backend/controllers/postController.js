@@ -7,10 +7,15 @@ const createPost = async (req, res) => {
 	try {
 		const { postedBy, text } = req.body;
 		let { image } = req.body;
-		if (!postedBy || !text) {
+
+		if (!postedBy) {
 			return res
 				.status(400)
-				.json({ error: "postedBy, and text fields are required" });
+				.json({ error: "Login to create a post" });
+		}
+
+		if(!text && !image){
+			return res.status(400).json({error: "You need to add content to create a post"})
 		}
 
 		const user = await User.findById(postedBy);
@@ -62,15 +67,18 @@ const deletePost = async (req, res) => {
 		if (!post) {
 			return res.status(404).json({ error: "Post not found" });
 		}
+
 		if (post.postedBy.toString() !== req.user._id.toString()) {
 			res
 				.status(401)
 				.json({ error: "You are not authorized to delete this post" });
 		}
+
 		if (post.image) {
 			const imageId = post.image.split("/").pop().split(".")[0];
 			await cloudinary.uploader.upload.destroy(imageId);
 		}
+
 		await Post.findByIdAndDelete(req.params.id);
 
 		res.status(200).json({ message: "Post deleted successfully" });
@@ -163,7 +171,6 @@ const repostPost = async (req, res) => {
 const getFeedPosts = async (req, res) => {
 	try {
 		const userId = req.user._id;
-		// console.log(userId);
 		const user = await User.findById(userId);
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
@@ -209,7 +216,9 @@ const getFeedPosts = async (req, res) => {
 				})),
 			...reposts
 				.filter(
-					(repost) => repost.repostedBy._id.toString() !== userId.toString() && repost.post.postedBy._id.toString() !== userId.toString()
+					(repost) =>
+						repost.repostedBy._id.toString() !== userId.toString() &&
+						repost.post.postedBy._id.toString() !== userId.toString()
 				)
 				.map((repost) => ({
 					...repost.post.toObject(),
@@ -227,7 +236,7 @@ const getFeedPosts = async (req, res) => {
 };
 
 const getUserPosts = async (req, res) => {
-	const  username  = req.params.username;
+	const username = req.params.username;
 
 	try {
 		const user = await User.findOne({ username });
@@ -235,9 +244,11 @@ const getUserPosts = async (req, res) => {
 			return res.status(404).json({ error: "User not found" });
 		}
 
-		const originalPosts = await Post.find({ postedBy: user._id }).populate("postedBy", "_id username name profilePicture").sort({
-			createdAt: -1,
-		});
+		const originalPosts = await Post.find({ postedBy: user._id })
+			.populate("postedBy", "_id username name profilePicture")
+			.sort({
+				createdAt: -1,
+			});
 
 		const reposts = await Repost.find({ repostedBy: user._id })
 			.populate({

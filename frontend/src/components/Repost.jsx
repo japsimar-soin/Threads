@@ -5,7 +5,6 @@ const Repost = ({ post, repostedBy }) => {
 	return (
 		<Box p={4} my={2}>
 			<Flex align="center" mb={4}>
-				{console.log(repostedBy)}
 				<Avatar
 					src={repostedBy.profilePic}
 					name={repostedBy.username}

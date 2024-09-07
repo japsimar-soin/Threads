@@ -11,10 +11,15 @@ const LogoutButton = () => {
 			top={"30px"}
 			right={4}
 			size={"sm"}
-			onClick={logout}
-			bg={useColorModeValue("gray.300", "gray.darkest")}
-			_hover={{ bg: useColorModeValue("gray.400", "gray.mid") }}
+			bg={useColorModeValue("gray.lightest", "gray.darkest")}
+			_hover={{ bg: useColorModeValue("gray.verylight", "gray.mid") }}
 			display={{ base: "none", md: "block" }}
+			cursor={"pointer"}
+			onClick={() => {
+				console.log("Button clicked");
+				logout();
+			}}
+			zIndex={10}
 		>
 			<FiLogOut size={16} />
 		</Button>

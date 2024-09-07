@@ -1,10 +1,19 @@
-import { Avatar, Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+	Avatar,
+	Box,
+	Button,
+	Flex,
+	Text,
+	useColorMode,
+	useColorModeValue
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import useFollowUnfollow from "../hooks/useFollowUnfollow";
 
 const SuggestedUser = ({ user }) => {
-	const {handleFollowUnfollow, following, updating} = useFollowUnfollow(user);
-	
+	const {colorMode} = useColorMode();
+	const { handleFollowUnfollow, following, updating } = useFollowUnfollow(user);
+
 	return (
 		<Flex gap={2} justifyContent={"space-between"} alignItems={"center"}>
 			<Flex gap={2} as={Link} to={`${user.username}`}>
@@ -13,7 +22,10 @@ const SuggestedUser = ({ user }) => {
 					<Text fontSize={"sm"} fontWeight={"bold"}>
 						{user.username}
 					</Text>
-					<Text color={useColorModeValue("gray.light", "gray.lightest")} fontSize={"sm"}>
+					<Text
+						color={useColorModeValue("gray.light", "gray.lightest")}
+						fontSize={"sm"}
+					>
 						{user.name}
 					</Text>
 				</Box>
@@ -21,8 +33,8 @@ const SuggestedUser = ({ user }) => {
 
 			<Button
 				size={"sm"}
-				color={following ? "black" : "white"}
-				bg={following ? "white" : "black"}
+				color={following ? (colorMode === "light" ? "gray.darkest": "gray.lightest") : (colorMode === "light" ? "gray.lightest": "gray.darkest")}
+				bg={following ? (colorMode === "light" ? "gray.lighter": "gray.dull") : (colorMode === "light" ? "gray.mid": "gray.verylight")}
 				onClick={handleFollowUnfollow}
 				isLoading={updating}
 				_hover={{

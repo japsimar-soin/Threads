@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import useShowToast from "./useShowToast";
 import userAtom from "../atoms/userAtom";
+import useShowToast from "./useShowToast";
 
 const useSaveUnsave = (postId) => {
 	const currentUser = useRecoilValue(userAtom);
@@ -21,7 +21,7 @@ const useSaveUnsave = (postId) => {
 					showToast("Error", data.error, "error");
 					return;
 				}
-                
+
 				setSaved(data.some((post) => post._id === postId));
 			} catch (error) {
 				showToast("Error", error.message, "error");

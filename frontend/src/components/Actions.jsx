@@ -12,6 +12,7 @@ import {
 	ModalHeader,
 	ModalOverlay,
 	Text,
+	useColorModeValue,
 	useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
@@ -19,9 +20,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import postAtom from "../atoms/postAtom";
 import useShare from "../hooks/useShare";
-// import useRepost from "../hooks/useRepost";
 import useShowToast from "../hooks/useShowToast";
-// import Repost from "./Repost";
 
 const Actions = ({ post }) => {
 	const user = useRecoilValue(userAtom);
@@ -33,7 +32,6 @@ const Actions = ({ post }) => {
 	const [reply, setReply] = useState("");
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { sharePost } = useShare();
-	// const { repostPost } = useRepost();
 
 	const handleLikeAndUnlike = async () => {
 		if (!user) return showToast("Error", "Login first", "error");
@@ -61,6 +59,7 @@ const Actions = ({ post }) => {
 					}
 					return p;
 				});
+
 				setPosts(updatedPosts);
 			} else {
 				const updatedPosts = posts.map((p) => {
@@ -69,6 +68,7 @@ const Actions = ({ post }) => {
 					}
 					return p;
 				});
+
 				setPosts(updatedPosts);
 			}
 
@@ -88,7 +88,11 @@ const Actions = ({ post }) => {
 				"error"
 			);
 		}
-		if (isReplying) return;
+
+		if (isReplying) {
+			return;
+		}
+
 		setIsReplying(true);
 
 		try {
@@ -144,7 +148,6 @@ const Actions = ({ post }) => {
 			});
 
 			const data = await res.json();
-			// console.log(data);
 
 			if (data.error) {
 				showToast("Error", data.error, "error");
@@ -159,7 +162,6 @@ const Actions = ({ post }) => {
 
 	return (
 		<Flex flexDirection="column">
-			{/* {post.repostedBy && <Repost repost={post} />} */}
 			<Flex gap={3} my={2} onClick={(e) => e.preventDefault()}>
 				<svg
 					aria-label={liked ? "Unlike" : "Like"}
@@ -247,7 +249,7 @@ const Actions = ({ post }) => {
 				</svg>
 			</Flex>
 
-			<Flex gap={2} alignItems={"center"}>
+			<Flex gap={2} justifyContent={"center"} alignItems={"center"}>
 				<Text color={"gray.light"} fontSize="sm">
 					{post.replies.length} replies
 				</Text>
@@ -257,15 +259,16 @@ const Actions = ({ post }) => {
 				</Text>
 			</Flex>
 
-			<Modal isOpen={isOpen} onClose={onClose}>
+			<Modal isOpen={isOpen} onClose={onClose} >
 				<ModalOverlay />
-				<ModalContent>
+				<ModalContent bg={useColorModeValue("gray.lighter","gray.mid")}>
 					<ModalHeader />
 					<ModalCloseButton />
-					<ModalBody pb={6}>
+					<ModalBody pb={6} bg={useColorModeValue("gray.lighter","gray.mid")}>
 						<FormControl>
 							<Input
 								placeholder="Reply goes here..."
+								_placeholder={{color: useColorModeValue("black", "white")}}
 								value={reply}
 								onChange={(e) => setReply(e.target.value)}
 							/>

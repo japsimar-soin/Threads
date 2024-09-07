@@ -7,8 +7,8 @@ import {
 	useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import SuggestedUser from "./SuggestedUser";
 import useShowToast from "../hooks/useShowToast";
+import SuggestedUser from "./SuggestedUser";
 
 const SuggestedUsers = () => {
 	const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ const SuggestedUsers = () => {
 			flexDirection={"column"}
 			p={4}
 			borderRadius={"md"}
-			bg={useColorModeValue("gray.lightest", "gray.800")}
+			bg={useColorModeValue("gray.lightest", "gray.darker")}
 		>
 			<Text mb={4} fontSize={20} fontWeight={"bold"}>
 				Suggested Users

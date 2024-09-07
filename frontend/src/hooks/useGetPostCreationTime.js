@@ -22,7 +22,7 @@ const useGetPostCreationTime = (timestamp) => {
 			} else if (typeof ts === "number") {
 				return new Date(ts);
 			}
-			return new Date(); 
+			return new Date();
 		};
 
 		const getTimeAgo = () => {
@@ -32,7 +32,7 @@ const useGetPostCreationTime = (timestamp) => {
 				console.error("Invalid date:", timestamp);
 				return "Invalid date";
 			}
-			
+
 			const timeDifference = formatDistanceToNowStrict(date);
 			return getInitials(timeDifference);
 		};

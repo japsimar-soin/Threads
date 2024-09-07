@@ -8,18 +8,16 @@ const useGetUserProfile = () => {
 	const { username } = useParams();
 	const showToast = useShowToast();
 
-	useEffect(() => {		
+	useEffect(() => {
 		if (!username) {
 			console.error("Username is undefined");
 			setLoading(false);
 			return;
 		}
-		
-		const getUser = async () => {
 
+		const getUser = async () => {
 			try {
 				const res = await fetch(`/api/users/profile/${username}`);
-
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
@@ -35,7 +33,7 @@ const useGetUserProfile = () => {
 			} catch (error) {
 				showToast("Error", error.message, "error");
 			} finally {
-				setLoading(false); 
+				setLoading(false);
 			}
 		};
 

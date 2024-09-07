@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from "react";
-import useShowToast from "../hooks/useShowToast";
 import {
 	Box,
 	Divider,
@@ -7,6 +5,8 @@ import {
 	Spinner,
 	useColorModeValue,
 } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import useShowToast from "../hooks/useShowToast";
 import Post from "../components/Post";
 
 const SavedPostsPage = () => {

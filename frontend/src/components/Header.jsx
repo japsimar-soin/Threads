@@ -1,11 +1,4 @@
-import {
-	Flex,
-	Image,
-	Link,
-	useColorMode,
-	IconButton,
-	Box,
-} from "@chakra-ui/react";
+import { Flex, Image, Link, useColorMode, Box } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import { GoHome } from "react-icons/go";
 import { Link as RouterLink } from "react-router-dom";
@@ -27,7 +20,17 @@ const Header = () => {
 				height="60px"
 			>
 				{user && (
-					<IconButton bg={"transparent"}>
+					<Box
+						className="icon-container"
+						borderRadius="50%"
+						p="8px"
+						w="40px"
+						h="40px"
+						transition="background-color 0.3s ease-in-out"
+						_hover={{
+							bg: colorMode === "light" ? "gray.verylight" : "gray.darker",
+						}}
+					>
 						<Link
 							as={RouterLink}
 							display={"block"}
@@ -37,7 +40,7 @@ const Header = () => {
 						>
 							<GoHome fontWeight={"bold"} size={24} />
 						</Link>
-					</IconButton>
+					</Box>
 				)}
 
 				<Image
