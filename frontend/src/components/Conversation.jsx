@@ -13,28 +13,21 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { BsCheck2All, BsFillImageFill } from "react-icons/bs";
 import { selectedConversationAtom } from "../atoms/conversationAtom";
+import { useEffect } from "react";
 import userAtom from "../atoms/userAtom";
 
 const Conversation = ({ conversation, isOnline }) => {
 	const user = conversation.participants[0];
-	const currentuser = useRecoilValue(userAtom);
 	const lastMessage = conversation.lastMessage;
+	const currentuser = useRecoilValue(userAtom);
 	const { colorMode } = useColorMode();
 	const [selectedConversation, setSelectedConversation] = useRecoilState(
 		selectedConversationAtom
 	);
 
-	let messagePreview;
-	if (lastMessage?.text?.length > 15) {
-		messagePreview = lastMessage.text.substring(0, 15) + "...";
-	} else if (lastMessage?.text) {
-		messagePreview = lastMessage.text;
-	} else if (lastMessage?.isImage) {
-		messagePreview = <BsFillImageFill size={16} />; // Show image icon if the message is an image
-	} else {
-		messagePreview = ""; // Show nothing if there is no text or image
-	}
+	useEffect(() => {
 
+	}, [lastMessage, conversation])
 	return (
 		<Flex
 			gap={4}
@@ -88,10 +81,18 @@ const Conversation = ({ conversation, isOnline }) => {
 					) : (
 						""
 					)}
-					{/* {lastMessage.text ? (lastMessage.text.length > 15
-						? lastMessage.text.substring(0, 15) + "..."
-						: lastMessage.text) : lastMessage.text === "" ? "" :  <BsFillImageFill size={16} />} */}
-						{messagePreview}
+					{console.log(lastMessage)}
+					{lastMessage.text.length > 0 ? (
+						lastMessage.text.length > 15 ? (
+							lastMessage.text.substring(0, 15) + "..."
+						) : (
+							lastMessage.text
+						)
+					) : lastMessage.isImage ? (
+						<BsFillImageFill size={16} />
+					) : (
+						""
+					)}
 				</Text>
 			</Stack>
 		</Flex>

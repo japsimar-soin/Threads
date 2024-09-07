@@ -29,7 +29,7 @@ const MessageInput = ({ setMessages }) => {
 	const setConversations = useSetRecoilState(conversationAtom);
 	const showToast = useShowToast();
 	const imageRef = useRef(null);
-	
+
 	const { onClose } = useDisclosure();
 	const { handleImageChange, image, setImage } = usePreviewImage();
 	const [messageText, setMessageText] = useState("");

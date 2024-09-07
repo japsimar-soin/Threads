@@ -15,9 +15,8 @@ import {
 	conversationAtom,
 	selectedConversationAtom,
 } from "../atoms/conversationAtom";
-
-import notificationSound from "../assets/sounds/notification.mp3";
 import userAtom from "../atoms/userAtom";
+import notificationSound from "../assets/sounds/notification.mp3";
 import useShowToast from "../hooks/useShowToast";
 import Message from "./Message";
 import MessageInput from "./MessageInput";
@@ -50,6 +49,7 @@ const MessageContainer = () => {
 							...conversation,
 							lastMessage: {
 								text: message.text,
+								isImage: message.isImage,
 								sender: message.sender,
 							},
 						};
@@ -93,8 +93,16 @@ const MessageContainer = () => {
 		});
 	}, [socket, currentUser._id, messages, selectedConversation]);
 
+	// useEffect(() => {
+	// 	messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	// }, [messages]);
+
 	useEffect(() => {
-		messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+		const timer = setTimeout(() => {
+			messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+		}, 100); // Delay to ensure messages are fully rendered
+
+		return () => clearTimeout(timer);
 	}, [messages]);
 
 	useEffect(() => {
@@ -193,6 +201,7 @@ const MessageContainer = () => {
 							/>
 						</Flex>
 					))}
+					<div ref={messageEndRef} />
 			</Flex>
 
 			<MessageInput setMessages={setMessages} />

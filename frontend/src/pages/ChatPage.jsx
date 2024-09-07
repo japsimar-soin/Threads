@@ -30,7 +30,6 @@ const ChatPage = () => {
 	const [selectedConversation, setSelectedConversation] = useRecoilState(
 		selectedConversationAtom
 	);
-	
 	const { socket, onlineUsers } = useSocket();
 	const currentUser = useRecoilValue(userAtom);
 	const showToast = useShowToast();
