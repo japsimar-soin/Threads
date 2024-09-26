@@ -73,12 +73,15 @@ const Post = ({ post, postedBy }) => {
 
 				const data = await res.json();
 				if (data.error) {
-					showToast("Error", data.error, "error");
+					// showToast("Error", data.error, "error");
+					console.log("getUser in post component -data error");
+
 					return;
 				}
 				setUser(data);
 			} catch (error) {
-				showToast("Error", error.message, "error");
+				// showToast("Error", error.message, "error");
+				console.log("getUser in post component");
 				setUser(null);
 			}
 		};

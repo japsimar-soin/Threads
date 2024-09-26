@@ -20,7 +20,9 @@ const useGetUserProfile = () => {
 				const res = await fetch(`/api/users/profile/${username}`);
 				const data = await res.json();
 				if (data.error) {
-					showToast("Error", data.error, "error");
+					// showToast("Error", data.error, "error");
+					console.log("getUserProfile Hook -data error");
+
 					return;
 				}
 
@@ -31,7 +33,8 @@ const useGetUserProfile = () => {
 
 				setUser(data);
 			} catch (error) {
-				showToast("Error", error.message, "error");
+				// showToast("Error", error.message, "error");
+				console.log("getUserProfile Hook");
 			} finally {
 				setLoading(false);
 			}

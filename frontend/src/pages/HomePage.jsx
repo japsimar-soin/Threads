@@ -28,11 +28,14 @@ const HomePage = () => {
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
+					console.log("getFeedPosts in Home page -data error");
+
 					return;
 				}
 
 				setPosts(data);
 			} catch (error) {
+				console.log("getFeedPosts in Home page");
 				showToast("Error", error.message, "error");
 			} finally {
 				setLoading(false);
